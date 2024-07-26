@@ -52,13 +52,9 @@ class _HomePageState extends State<HomePage> {
                     Center(
                       child: Column(
                         children: [
-                          const Text(
-                            'MONEY',
-                            style: TextStyle(
-                              color: Color(0xFF1CA477),
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          const Image(
+                            width: 150,
+                            image: AssetImage('assets/images/logo.png'),
                           ),
                           const SizedBox(height: 8),
                           Text(
