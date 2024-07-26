@@ -18,7 +18,7 @@ class CustomButton extends StatelessWidget {
         foregroundColor: Colors.white,
         minimumSize: const Size(150, 50),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
       onPressed: onPressed,
@@ -30,6 +30,10 @@ class CustomButton extends StatelessWidget {
             style: const TextStyle(
                 color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
           ),
+          if (text.toLowerCase() != 'acessar') ...[
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_forward, color: Colors.black),
+          ],
         ],
       ),
     );

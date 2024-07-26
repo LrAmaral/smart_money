@@ -20,5 +20,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DM_Sans/DMSans-Italic-VariableFont_opsz,wght.ttf
+        - asset: assets/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf
+          weight: 700
+          style: italic
   assets:
+    - assets/fonts/
     - assets/images/logo.png

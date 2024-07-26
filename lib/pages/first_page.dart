@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 
 class FirstPage extends StatefulWidget {
@@ -29,7 +30,9 @@ class _FirstPageState extends State<FirstPage> {
             const SizedBox(height: 96),
             CustomButton(
               text: 'Acessar',
-              onPressed: () {},
+              onPressed: () {
+                context.go('/login');
+              },
             ),
             const SizedBox(height: 120),
           ],

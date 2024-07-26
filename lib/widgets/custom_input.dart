@@ -19,22 +19,23 @@ class CustomInput extends StatelessWidget {
       obscureText: obscureText,
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: const TextStyle(color: Colors.white),
+        labelStyle: const TextStyle(color: Color.fromARGB(255, 100, 100, 100)),
         filled: true,
-        fillColor: Colors.black54,
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF1CA477)),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF1CA477)),
         ),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey),
+          borderSide: BorderSide(color: Color.fromARGB(255, 100, 100, 100)),
         ),
       ),
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color.fromARGB(255, 100, 100, 100)),
     );
   }
 }
