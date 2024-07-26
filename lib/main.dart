@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_money/pages/first_page.dart';
 import 'pages/login_page.dart';
 import 'pages/home_page.dart';
 
