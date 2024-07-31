@@ -1,16 +1,46 @@
-# smart_money
+## Descrição
 
-A new Flutter project.
+<p align="center" >
+  <a href="https://smartmoney.vercel.app/login" target="blank"><img src="https://github.com/DanielAlmeidaToledo/Smart.money/assets/96501443/a8cce6c7-4637-4e48-b9cd-a54ef62dd3f9" alt="Smart.money width="180" height="180"/><a>
+</p>
+<br><br>
 
-## Getting Started
+[Smartmoney](https://smartmoney.vercel.app/login) - App de gerenciamento de controle financeiro!
 
-This project is a starting point for a Flutter application.
+## Tecnologias
 
-A few resources to get you started if this is your first Flutter project:
+<a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="50" alt="Nest Logo" /></a>
+<a href="https://www.typescriptlang.org/" target="blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="50" alt="Typescript Logo" /></a>
+<a href="https://www.sqlite.org/index.html" target="blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" width="50" alt="Sqlite Logo" /></a>
+<a href="https://nodejs.org/en" target="blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="50" alt="Node Logo" /></a>
+<a href="https://jwt.io/" target="blank"><img src="https://seeklogo.com/images/J/jwt-logo-65D86B4640-seeklogo.com.png" width="50" alt="Jwt Logo" /></a>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Instalação de dependências
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+$ npm install
+```
+
+```bash
+$ npm install -g @prisma/client
+```
+
+```bash
+$  npm i -g @nestjs/cli
+```
+
+## Rodando a aplicação
+
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
+
+# prisma client
+$ npx prisma studio
+```
