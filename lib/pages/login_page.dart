@@ -10,11 +10,12 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1CA477)),
+          icon: Icon(Icons.arrow_back, color: colorScheme.primary),
           onPressed: () {
             context.go('/');
           },
@@ -27,9 +28,9 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
+              Text(
                 'Login',
-                style: TextStyle(fontSize: 24, color: Color(0xFF1CA477)),
+                style: TextStyle(fontSize: 24, color: colorScheme.primary),
               ),
               const SizedBox(height: 28),
               const Image(
@@ -74,13 +75,15 @@ class LoginPage extends StatelessWidget {
                   context.go('/register');
                 },
                 child: RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     text: 'Não possui uma conta? ',
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    style:
+                        TextStyle(fontSize: 14, color: colorScheme.onPrimary),
                     children: <TextSpan>[
                       TextSpan(
                         text: 'Registre-se',
-                        style: TextStyle(color: Colors.green, fontSize: 14),
+                        style:
+                            TextStyle(color: colorScheme.primary, fontSize: 14),
                       ),
                     ],
                   ),

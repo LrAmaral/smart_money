@@ -16,11 +16,12 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1CA477)),
+          icon: Icon(Icons.arrow_back, color: colorScheme.primary),
           onPressed: () {
             context.go('/');
           },
@@ -33,12 +34,11 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
+              Text(
                 'Cadastrar',
-                style: TextStyle(fontSize: 28, color: Color(0xFF1CA477)),
+                style: TextStyle(fontSize: 28, color: colorScheme.primary),
               ),
-              const SizedBox(height: 28),
-              const SizedBox(height: 52),
+              const SizedBox(height: 50),
               CustomInput(
                 labelText: 'Nome',
                 controller: emailController,
@@ -73,13 +73,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   context.go('/login');
                 },
                 child: RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     text: 'Já possui uma conta? ',
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    style:
+                        TextStyle(fontSize: 14, color: colorScheme.onPrimary),
                     children: <TextSpan>[
                       TextSpan(
                         text: 'Acesse',
-                        style: TextStyle(color: Colors.green, fontSize: 14),
+                        style:
+                            TextStyle(color: colorScheme.primary, fontSize: 14),
                       ),
                     ],
                   ),

@@ -12,10 +12,12 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF1CA477),
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         minimumSize: const Size(150, 50),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -27,12 +29,14 @@ class CustomButton extends StatelessWidget {
         children: [
           Text(
             text,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18),
+            style: TextStyle(
+                color: colorScheme.onPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: 18),
           ),
           if (text.toLowerCase() != 'acessar') ...[
             const SizedBox(width: 4),
-            const Icon(Icons.arrow_forward, color: Colors.white),
+            Icon(Icons.arrow_forward, color: colorScheme.onPrimary),
           ],
         ],
       ),
