@@ -28,11 +28,11 @@ class CustomButton extends StatelessWidget {
           Text(
             text,
             style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
+                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18),
           ),
           if (text.toLowerCase() != 'acessar') ...[
             const SizedBox(width: 4),
-            const Icon(Icons.arrow_forward, color: Colors.black),
+            const Icon(Icons.arrow_forward, color: Colors.white),
           ],
         ],
       ),

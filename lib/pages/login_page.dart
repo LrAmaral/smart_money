@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 28),
               const Image(
                   width: 200, image: AssetImage('assets/images/logo.png')),
-              const SizedBox(height: 52),
+              const SizedBox(height: 64),
               CustomInput(
                 labelText: 'Email',
                 controller: emailController,
@@ -61,7 +61,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 48),
               CustomButton(
                 text: 'Login',
                 onPressed: () {
