@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_money/pages/edit_password_page.dart';
+import 'package:smart_money/pages/first_page.dart';
+import 'package:smart_money/pages/register_page.dart';
 import 'pages/login_page.dart';
 import 'pages/home_page.dart';
 
@@ -16,8 +19,15 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => const LoginPage(),
+          builder: (context, state) => const FirstPage(),
         ),
+        GoRoute(
+            path: '/forgot_password',
+            builder: (context, state) => const EditPasswordPage()),
+        GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+        GoRoute(
+            path: '/register',
+            builder: (context, state) => const RegisterPage()),
         GoRoute(
           path: '/home',
           builder: (context, state) => const HomePage(),
@@ -57,6 +67,7 @@ class MyApp extends StatelessWidget {
       routerConfig: _router,
       title: 'Smart Money',
       theme: ThemeData(
+        fontFamily: 'DM Sans',
         colorScheme: colorScheme,
         useMaterial3: true,
         scaffoldBackgroundColor: colorScheme.background,

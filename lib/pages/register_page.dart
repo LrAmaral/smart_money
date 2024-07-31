@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
@@ -29,13 +35,15 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Login',
-                style: TextStyle(fontSize: 24, color: colorScheme.primary),
+                'Cadastrar',
+                style: TextStyle(fontSize: 28, color: colorScheme.primary),
               ),
-              const SizedBox(height: 28),
-              const Image(
-                  width: 200, image: AssetImage('assets/images/logo.png')),
-              const SizedBox(height: 64),
+              const SizedBox(height: 50),
+              CustomInput(
+                labelText: 'Nome',
+                controller: emailController,
+              ),
+              const SizedBox(height: 16),
               CustomInput(
                 labelText: 'Email',
                 controller: emailController,
@@ -46,25 +54,15 @@ class LoginPage extends StatelessWidget {
                 controller: passwordController,
                 obscureText: true,
               ),
-              const SizedBox(height: 8),
-              InkWell(
-                onTap: () {
-                  context.go('/forgot_password');
-                },
-                child: const Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 0),
-                    child: Text(
-                      'Esqueceu a senha?',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ),
+              const SizedBox(height: 16),
+              CustomInput(
+                labelText: 'Confirmar Senha',
+                controller: passwordController,
+                obscureText: true,
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 56),
               CustomButton(
-                text: 'Login',
+                text: 'Cadastrar',
                 onPressed: () {
                   context.go('/home');
                 },
@@ -72,16 +70,16 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 16),
               InkWell(
                 onTap: () {
-                  context.go('/register');
+                  context.go('/login');
                 },
                 child: RichText(
                   text: TextSpan(
-                    text: 'Não possui uma conta? ',
+                    text: 'Já possui uma conta? ',
                     style:
                         TextStyle(fontSize: 14, color: colorScheme.onPrimary),
                     children: <TextSpan>[
                       TextSpan(
-                        text: 'Registre-se',
+                        text: 'Acesse',
                         style:
                             TextStyle(color: colorScheme.primary, fontSize: 14),
                       ),
@@ -89,7 +87,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 180),
+              const SizedBox(height: 100),
             ],
           ),
         ),
