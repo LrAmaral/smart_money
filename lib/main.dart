@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => const FirstPage(),
+          builder: (context, state) => const HomePage(),
         ),
         GoRoute(
             path: '/forgot_password',
@@ -57,9 +57,10 @@ class MyApp extends StatelessWidget {
       error: Colors.red,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
-      onSurface: Colors.white,
+      onSurface: const Color.fromARGB(255, 216, 216, 216),
       onBackground: Colors.white,
       onError: Colors.white,
+      surfaceTint: const Color(0xFF646464),
       brightness: Brightness.dark,
     );
 
@@ -81,11 +82,6 @@ class MyApp extends StatelessWidget {
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
           ),
-        ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: colorScheme.surface,
-          selectedItemColor: colorScheme.primary,
-          unselectedItemColor: Colors.grey,
         ),
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: colorScheme.onBackground),
