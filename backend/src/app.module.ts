@@ -7,7 +7,6 @@ import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { TransactionModule } from './transaction/transaction.module';
-import { CardModule } from './card/card.module';
 import { GoalModule } from './goal/goal.module';
 
 @Module({
@@ -16,7 +15,6 @@ import { GoalModule } from './goal/goal.module';
     UserModule,
     AuthModule,
     TransactionModule,
-    CardModule,
     GoalModule,
   ],
   controllers: [AppController],
