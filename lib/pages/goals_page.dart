@@ -11,24 +11,30 @@ class GoalsPage extends StatefulWidget {
 class _GoalsPageState extends State<GoalsPage> {
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: <Widget>[
             Image.asset(
               'assets/images/logo.png',
-              height: 40,
+              height: 48,
             ),
             const SizedBox(width: 16),
-            CustomButton(text: 'Adicionar meta', onPressed:() {})
+            CustomButton(text: 'Adicionar meta', onPressed: () {})
           ],
         ),
-        backgroundColor: Colors.blue,
       ),
       body: const Center(
         child: SizedBox(
           child: Column(
-            children: <Widget>[],
+            children: <Widget>[
+              Text(
+                'Metas',
+                style: TextStyle(fontSize: 24),
+              )
+            ],
           ),
         ),
       ),
