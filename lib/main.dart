@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => const HomePage(),
+          builder: (context, state) => const FirstPage(),
         ),
         GoRoute(
             path: '/forgot_password',

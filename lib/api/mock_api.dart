@@ -13,5 +13,5 @@ var mockResponseApi = {
 };
 
 Future<Map<String, dynamic>> fetchDashboardData() async {
-  return Future.delayed(const Duration(seconds: 0), () => mockResponseApi);
+  return Future.delayed(const Duration(seconds: 1), () => mockResponseApi);
 }
