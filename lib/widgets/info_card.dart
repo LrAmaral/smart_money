@@ -14,6 +14,39 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    double? valueParsed;
+    if (title == 'Saldo Geral') {
+      valueParsed =
+          double.tryParse(value.replaceAll('R\$', '').replaceAll(',', '')) ??
+              0.0;
+    }
+
+    IconData getIconData() {
+      if (valueParsed != null) {
+        if (valueParsed > 0) {
+          return Icons.arrow_circle_up;
+        } else if (valueParsed < 0) {
+          return Icons.arrow_circle_down;
+        } else {
+          return Icons.horizontal_rule;
+        }
+      }
+      return Icons.horizontal_rule;
+    }
+
+    Color getIconColor() {
+      if (valueParsed != null) {
+        if (valueParsed > 0) {
+          return colorScheme.primary;
+        } else if (valueParsed < 0) {
+          return colorScheme.error;
+        }
+      }
+      return colorScheme.onSurface;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -23,23 +56,36 @@ class InfoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: TextStyle(color: colorScheme.onPrimary),
+              ),
+              if (title == 'Saldo Geral')
+                Icon(
+                  getIconData(),
+                  color: getIconColor(),
+                  size: 28,
+                ),
+            ],
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
+            style: TextStyle(
+              color: title == 'Saldo Geral'
+                  ? getIconColor()
+                  : colorScheme.onSurface,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: const TextStyle(color: Colors.white54),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
         ],
       ),

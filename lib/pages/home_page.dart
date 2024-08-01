@@ -28,6 +28,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -48,26 +50,26 @@ class _HomePageState extends State<HomePage> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40),
                     Center(
                       child: Column(
                         children: [
                           const Image(
-                            width: 150,
+                            width: 200,
                             image: AssetImage('assets/images/logo.png'),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 52),
                           Text(
                             'Seja bem vindo, ${user['name']}!',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 16,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 52),
                     InfoCard(
                       title: 'Saldo Geral',
                       subtitle: 'Últimos 30 dias',
