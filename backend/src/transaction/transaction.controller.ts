@@ -20,7 +20,6 @@ export class TransactionController {
     return this.transactionService.create(createTransactionDto);
   }
 
-  //TODO: Implementar Decorator para que somente o admin possa acessar
   @Get()
   findAll() {
     return this.transactionService.findAll();
