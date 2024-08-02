@@ -14,7 +14,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('me') // Só é possivel acessar passando o token
+  @Get('me') // Só é possivel acessar passando o access_token
   getMe(@CurrentUser() user: User) {
     return user;
   }
