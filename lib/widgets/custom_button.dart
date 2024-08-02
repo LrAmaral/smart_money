@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final Size? size;
+  final bool showArrowIcon;
+  final double textSize;
 
   const CustomButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.size = const Size(120, 40),
+    this.showArrowIcon = false,
+    this.textSize = 16,
   });
 
   @override
@@ -18,7 +24,8 @@ class CustomButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-        minimumSize: const Size(150, 50),
+        minimumSize: size,
+        padding: EdgeInsets.symmetric(horizontal: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -32,9 +39,9 @@ class CustomButton extends StatelessWidget {
             style: TextStyle(
                 color: colorScheme.onPrimary,
                 fontWeight: FontWeight.w600,
-                fontSize: 18),
+                fontSize: textSize),
           ),
-          if (text.toLowerCase() != 'acessar') ...[
+          if (showArrowIcon) ...[
             const SizedBox(width: 4),
             Icon(Icons.arrow_forward, color: colorScheme.onPrimary),
           ],
