@@ -1,11 +1,11 @@
-## Descrição
-
 <p align="center" >
   <a href="https://smartmoney.vercel.app/login" target="blank"><img src="https://github.com/DanielAlmeidaToledo/Smart.money/assets/96501443/a8cce6c7-4637-4e48-b9cd-a54ef62dd3f9" alt="Smart.money width="180" height="180"/><a>
 </p>
 <br><br>
 
-[Smartmoney](https://smartmoney.vercel.app/login) - App de gerenciamento de controle financeiro!
+## Descrição
+
+SmartMoney - App de gerenciamento de controle financeiro!
 
 ## Tecnologias
 

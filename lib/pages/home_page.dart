@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api/mock_api.dart';
 import '../widgets/info_card.dart';
-import '../utils/bottom_navbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +11,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<Map<String, dynamic>> _dashboardData;
-  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -20,20 +18,12 @@ class _HomePageState extends State<HomePage> {
     _dashboardData = fetchDashboardData();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(24),
           child: FutureBuilder<Map<String, dynamic>>(
             future: _dashboardData,
             builder: (context, snapshot) {
@@ -102,10 +92,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
       ),
     );
   }
