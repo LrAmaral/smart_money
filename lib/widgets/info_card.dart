@@ -50,7 +50,7 @@ class InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: colorScheme.secondary,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(

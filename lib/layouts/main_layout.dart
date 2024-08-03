@@ -15,6 +15,8 @@ class MainLayoutState extends State<MainLayout> {
   final List<Widget> _pages = [
     const HomePage(),
     const GoalsPage(),
+    const HomePage(),
+    const HomePage(),
   ];
 
   void _onItemTapped(int index) {
