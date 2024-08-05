@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:smart_money/widgets/custom_button.dart';
+import 'package:smart_money/widgets/custom_input.dart';
 
 class GoalsPage extends StatefulWidget {
-  const GoalsPage({Key? key}) : super(key: key);
+  const GoalsPage({super.key});
 
   @override
-  _GoalsPageState createState() => _GoalsPageState();
+  GoalsPageState createState() => GoalsPageState();
 }
 
-class _GoalsPageState extends State<GoalsPage> {
+class GoalsPageState extends State<GoalsPage> {
   final List<Map<String, dynamic>> _goals = [
     {
       'name': 'Pagar Agiota',
@@ -99,12 +100,12 @@ class _GoalsPageState extends State<GoalsPage> {
       appBar: AppBar(
         backgroundColor: colorScheme.background,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Image.asset(
               'assets/images/logo.png',
               height: 40,
             ),
-            const SizedBox(width: 140),
             CustomButton(
               text: 'Adicionar meta',
               size: const Size(100, 36),
@@ -116,10 +117,11 @@ class _GoalsPageState extends State<GoalsPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            const SizedBox(height: 16),
             Text(
               'Metas',
               style: TextStyle(
@@ -132,30 +134,26 @@ class _GoalsPageState extends State<GoalsPage> {
             Row(
               children: [
                 Expanded(
-                  child: TextField(
+                  child: CustomInput(
+                    labelText: 'Busque uma meta',
                     controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Busque uma meta',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
+                    obscureText: true,
                   ),
                 ),
-                const SizedBox(width: 8.0),
+                const SizedBox(width: 16),
                 OutlinedButton(
                   onPressed: _onSearchButtonPressed,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: colorScheme.primary, width: 1.0),
+                    side: BorderSide(color: colorScheme.primary, width: 1),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    padding: const EdgeInsets.all(14.5),
+                    padding: const EdgeInsets.all(12),
                   ),
                   child: Icon(
                     Icons.search,
                     color: colorScheme.primary,
-                    size: 28,
+                    size: 24,
                   ),
                 ),
               ],
@@ -180,8 +178,9 @@ class _GoalsPageState extends State<GoalsPage> {
 
                         return Card(
                           color: colorScheme.secondary,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
                           child: Padding(
-                            padding: const EdgeInsets.all(24.0),
+                            padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -217,8 +216,6 @@ class _GoalsPageState extends State<GoalsPage> {
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
                                                   colorScheme.primary),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
                                         ),
                                       ),
                                     ),
