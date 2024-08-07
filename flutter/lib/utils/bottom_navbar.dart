@@ -5,22 +5,16 @@ class BottomNavBar extends StatelessWidget {
   final ValueChanged<int> onItemTapped;
 
   const BottomNavBar({
-    super.key,
+    Key? key,
     required this.selectedIndex,
     required this.onItemTapped,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: selectedIndex,
-      unselectedItemColor: colorScheme.surfaceTint,
-      selectedItemColor: colorScheme.primary,
-      backgroundColor: colorScheme.secondary,
-      onTap: onItemTapped,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_filled),
@@ -28,7 +22,7 @@ class BottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.receipt),
-          label: 'Transações',
+          label: 'Extrato',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.flag),
@@ -39,6 +33,12 @@ class BottomNavBar extends StatelessWidget {
           label: 'Perfil',
         ),
       ],
+      currentIndex: selectedIndex,
+      unselectedItemColor: Colors.grey,
+      selectedItemColor: colorScheme.primary,
+      backgroundColor: colorScheme.secondary,
+      type: BottomNavigationBarType.fixed,
+      onTap: onItemTapped,
     );
   }
 }
