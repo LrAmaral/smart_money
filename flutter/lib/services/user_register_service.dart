@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../api/register_user.dart';
+import 'package:smart_money/api/register_user.dart';
 
 class UserService {
   Future<void> registerUser(UserRegister user) async {
-    var url = Uri.parse('localhost:3000/user');
+    var url = Uri.parse('http://10.0.2.2:3000/user');
 
-    var userJson = user.toJson();
+    var userJson = user.toRegisterJson();
 
     try {
       var response = await http.post(

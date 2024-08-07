@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../api/mock_api.dart';
 import '../widgets/info_card.dart';
+import '../utils/bottom_navbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<Map<String, dynamic>> _dashboardData;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -18,12 +20,18 @@ class _HomePageState extends State<HomePage> {
     _dashboardData = fetchDashboardData();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16.0),
           child: FutureBuilder<Map<String, dynamic>>(
             future: _dashboardData,
             builder: (context, snapshot) {
@@ -40,26 +48,26 @@ class _HomePageState extends State<HomePage> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
                     Center(
                       child: Column(
                         children: [
                           const Image(
-                            width: 200,
+                            width: 150,
                             image: AssetImage('assets/images/logo.png'),
                           ),
-                          const SizedBox(height: 52),
+                          const SizedBox(height: 8),
                           Text(
                             'Seja bem vindo, ${user['name']}!',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 18,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 52),
+                    const SizedBox(height: 20),
                     InfoCard(
                       title: 'Saldo Geral',
                       subtitle: 'Últimos 30 dias',
@@ -92,6 +100,10 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
   }

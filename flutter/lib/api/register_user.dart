@@ -6,33 +6,33 @@ UserRegister welcomeFromJson(String str) =>
 String welcomeToJson(UserRegister data) => json.encode(data.toJson());
 
 class UserRegister {
-  String id;
   String email;
   String name;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String password;
 
   UserRegister({
-    required this.id,
     required this.email,
     required this.name,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.password,
   });
 
   factory UserRegister.fromJson(Map<String, dynamic> json) => UserRegister(
-        id: json["id"],
         email: json["email"],
         name: json["name"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
+        password: json["password"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
         "email": email,
         "name": name,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "password": password,
+      };
+}
+
+extension UserRegisterExtension on UserRegister {
+  Map<String, dynamic> toRegisterJson() => {
+        "name": name,
+        "email": email,
+        "password": password,
       };
 }
