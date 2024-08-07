@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_money/pages/edit_password_page.dart';
 import 'package:smart_money/pages/first_page.dart';
 import 'package:smart_money/pages/register_page.dart';
-import 'pages/login_page.dart';
-import 'pages/home_page.dart';
+import 'package:smart_money/pages/login_page.dart';
+import 'package:smart_money/layouts/main_layout.dart';
+import 'package:smart_money/enums/route_path.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,31 +19,44 @@ class MyApp extends StatelessWidget {
     final GoRouter _router = GoRouter(
       routes: [
         GoRoute(
-          path: '/',
+          path: RoutePath.firstPage.path,
+          name: RoutePath.firstPage.name,
           builder: (context, state) => const FirstPage(),
         ),
         GoRoute(
-            path: '/forgot_password',
-            builder: (context, state) => const EditPasswordPage()),
-        GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-        GoRoute(
-            path: '/register',
-            builder: (context, state) => const RegisterPage()),
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomePage(),
+          path: RoutePath.forgotPassword.path,
+          name: RoutePath.forgotPassword.name,
+          builder: (context, state) => const EditPasswordPage(),
         ),
         GoRoute(
-          path: '/extract',
-          builder: (context, state) => const HomePage(),
+          path: RoutePath.login.path,
+          name: RoutePath.login.name,
+          builder: (context, state) => const LoginPage(),
         ),
         GoRoute(
-          path: '/goals',
-          builder: (context, state) => const HomePage(),
+          path: RoutePath.register.path,
+          name: RoutePath.register.name,
+          builder: (context, state) => const RegisterPage(),
         ),
         GoRoute(
-          path: '/profile',
-          builder: (context, state) => const HomePage(),
+          path: RoutePath.home.path,
+          name: RoutePath.home.name,
+          builder: (context, state) => const MainLayout(),
+        ),
+        GoRoute(
+          path: RoutePath.extract.path,
+          name: RoutePath.extract.name,
+          builder: (context, state) => const MainLayout(),
+        ),
+        GoRoute(
+          path: RoutePath.goals.path,
+          name: RoutePath.goals.name,
+          builder: (context, state) => const MainLayout(),
+        ),
+        GoRoute(
+          path: RoutePath.profile.path,
+          name: RoutePath.profile.name,
+          builder: (context, state) => const MainLayout(),
         ),
       ],
     );
@@ -57,9 +71,10 @@ class MyApp extends StatelessWidget {
       error: Colors.red,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
-      onSurface: Colors.white,
+      onSurface: const Color.fromARGB(255, 216, 216, 216),
       onBackground: Colors.white,
       onError: Colors.white,
+      surfaceTint: const Color(0xFF646464),
       brightness: Brightness.dark,
     );
 
@@ -81,11 +96,6 @@ class MyApp extends StatelessWidget {
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
           ),
-        ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: colorScheme.surface,
-          selectedItemColor: colorScheme.primary,
-          unselectedItemColor: Colors.grey,
         ),
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: colorScheme.onBackground),
