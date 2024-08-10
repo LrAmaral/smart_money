@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smart_money/pages/goals_page.dart';
 import 'package:smart_money/pages/home_page.dart';
+import 'package:smart_money/pages/goals_page.dart';
+import 'package:smart_money/pages/transactions_page.dart';
 import 'package:smart_money/utils/bottom_navbar.dart';
 
 class MainLayout extends StatefulWidget {
@@ -14,8 +15,8 @@ class MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
   final List<Widget> _pages = [
     const HomePage(),
+    const TransactionsPage(),
     const GoalsPage(),
-    const HomePage(),
     const HomePage(),
   ];
 
