@@ -28,6 +28,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              const SizedBox(height: 30),
               Text(
                 'Login',
                 style: TextStyle(fontSize: 24, color: colorScheme.primary),
@@ -89,7 +90,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 180),
+              const SizedBox(height: 60),
             ],
           ),
         ),

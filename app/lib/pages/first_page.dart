@@ -34,7 +34,7 @@ class _FirstPageState extends State<FirstPage> {
                 context.go('/login');
               },
             ),
-            const SizedBox(height: 120),
+            const SizedBox(height: 60),
           ],
         ),
       )),

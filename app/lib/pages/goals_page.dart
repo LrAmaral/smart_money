@@ -27,39 +27,9 @@ class GoalsPageState extends State<GoalsPage> {
       'goal': 100000.0,
     },
     {
-      'name': 'Curso de Inglês',
-      'current': 250.0,
-      'goal': 1500.0,
-    },
-    {
       'name': 'Viagem para Europa',
       'current': 2000.0,
       'goal': 12000.0,
-    },
-    {
-      'name': 'Novo Carro',
-      'current': 5000.0,
-      'goal': 30000.0,
-    },
-    {
-      'name': 'Fundo de Emergência',
-      'current': 800.0,
-      'goal': 5000.0,
-    },
-    {
-      'name': 'Empreendimento Próprio',
-      'current': 1500.0,
-      'goal': 20000.0,
-    },
-    {
-      'name': 'Compra de Smartphone',
-      'current': 200.0,
-      'goal': 1000.0,
-    },
-    {
-      'name': 'Economias para Aposentadoria',
-      'current': 3000.0,
-      'goal': 50000.0,
     }
   ];
 

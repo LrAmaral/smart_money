@@ -81,7 +81,7 @@ class TransactionsPageState extends State<TransactionsPage> {
               height: 40,
             ),
             CustomButton(
-              text: 'Nova transação',
+              text: 'Adicionar transação',
               size: const Size(100, 36),
               showArrowIcon: false,
               textSize: 12,
@@ -163,43 +163,69 @@ class TransactionsPageState extends State<TransactionsPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
+                                Text(
+                                  transaction['title'],
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 10),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      transaction['title'],
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                                     Text(
                                       'R\$ ${transaction['amount'].toStringAsFixed(2)}',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
                                         color: amountColor,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  transaction['category'],
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: colorScheme.onBackground
-                                        .withOpacity(0.7),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  transaction['date'],
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: colorScheme.onBackground
-                                        .withOpacity(0.7),
-                                  ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.turned_in_not,
+                                          size: 16,
+                                          color: colorScheme.onSurface
+                                              .withOpacity(0.6),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          transaction['category'],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: colorScheme.onSurface
+                                                .withOpacity(0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.calendar_today,
+                                          size: 16,
+                                          color: colorScheme.onSurface
+                                              .withOpacity(0.6),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          transaction['date'],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: colorScheme.onSurface
+                                                .withOpacity(0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
