@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
+import 'package:smart_money/widgets/modal_goals.dart';
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({super.key});
@@ -77,12 +78,26 @@ class GoalsPageState extends State<GoalsPage> {
               height: 40,
             ),
             CustomButton(
-              text: 'Adicionar meta',
-              size: const Size(100, 36),
-              showArrowIcon: false,
-              textSize: 12,
-              onPressed: () {},
-            ),
+                text: 'Adicionar meta',
+                size: const Size(100, 36),
+                showArrowIcon: false,
+                textSize: 12,
+                onPressed: () => showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return CustomModal(
+                          title: "Adicionar Meta",
+                          fields: const [
+                            {'label': 'Nome'},
+                            {'label': 'Valor Inicial'},
+                            {'label': 'Valor Final'}
+                          ],
+                          onConfirm: () {},
+                        );
+                      },
+                    ))
           ],
         ),
       ),
