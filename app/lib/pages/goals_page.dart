@@ -88,6 +88,7 @@ class GoalsPageState extends State<GoalsPage> {
                       isScrollControlled: true,
                       builder: (BuildContext context) {
                         return CustomModal(
+                          textButton: "Adicionar",
                           title: "Adicionar Meta",
                           fields: const [
                             {'label': 'Nome'},
@@ -122,7 +123,6 @@ class GoalsPageState extends State<GoalsPage> {
                   child: CustomInput(
                     labelText: 'Busque uma meta',
                     controller: _searchController,
-                    obscureText: true,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -161,65 +161,113 @@ class GoalsPageState extends State<GoalsPage> {
                         final goal = _filteredGoals[index];
                         final progress = (goal['current'] / goal['goal']) * 100;
 
-                        return Card(
-                          color: colorScheme.secondary,
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      goal['name'],
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.add,
-                                      color: colorScheme.primary,
-                                      size: 28,
-                                    ),
+                        return GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomModal(
+                                  textButton: "Atualizar",
+                                  title: "Editar Meta",
+                                  fields: [
+                                    {
+                                      'label': goal['name'],
+                                      'value': goal['name']
+                                    },
+                                    {
+                                      'label': goal['current'].toString(),
+                                      'value': goal['current'].toString()
+                                    },
+                                    {
+                                      'label': goal['goal'].toString(),
+                                      'value': goal['goal'].toString()
+                                    },
                                   ],
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: LinearProgressIndicator(
-                                          minHeight: 10,
-                                          value: progress / 100,
-                                          backgroundColor: colorScheme.primary
-                                              .withOpacity(0.3),
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  colorScheme.primary),
+                                  onConfirm: () {},
+                                );
+                              },
+                            );
+                          },
+                          child: Card(
+                            color: colorScheme.secondary,
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        goal['name'],
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    Text(
-                                      '${progress.toStringAsFixed(0)}%',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: colorScheme.onPrimary,
+                                      GestureDetector(
+                                        onTap: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CustomModal(
+                                                textButton: "Adicionar",
+                                                title: "Adicionar Saldo",
+                                                fields: const [
+                                                  {'label': 'Valor'},
+                                                ],
+                                                onConfirm: () {},
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Icon(
+                                          Icons.add,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          size: 28,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: LinearProgressIndicator(
+                                            minHeight: 10,
+                                            value: progress / 100,
+                                            backgroundColor: colorScheme.primary
+                                                .withOpacity(0.3),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    colorScheme.primary),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'R\$${goal['current']} - R\$${goal['goal']}',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ],
+                                      const SizedBox(width: 8.0),
+                                      Text(
+                                        '${progress.toStringAsFixed(0)}%',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: colorScheme.onPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'R\$${goal['current']} - R\$${goal['goal']}',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );

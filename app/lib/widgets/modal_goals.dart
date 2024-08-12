@@ -6,13 +6,15 @@ class CustomModal extends StatelessWidget {
   final String title;
   final List<Map<String, String>> fields;
   final VoidCallback onConfirm;
+  final String textButton;
 
-  const CustomModal({
-    Key? key,
-    required this.title,
-    required this.fields,
-    required this.onConfirm,
-  }) : super(key: key);
+  const CustomModal(
+      {Key? key,
+      required this.title,
+      required this.fields,
+      required this.onConfirm,
+      required this.textButton})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +66,7 @@ class CustomModal extends StatelessWidget {
                 )),
             const SizedBox(height: 48),
             CustomButton(
-              text: "Adicionar",
+              text: textButton,
               onPressed: () {
                 onConfirm();
                 Navigator.pop(context);
