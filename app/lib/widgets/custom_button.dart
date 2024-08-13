@@ -6,6 +6,7 @@ class CustomButton extends StatelessWidget {
   final Size? size;
   final bool showArrowIcon;
   final double textSize;
+  final Color? buttonColor;
 
   const CustomButton({
     super.key,
@@ -14,20 +15,30 @@ class CustomButton extends StatelessWidget {
     this.size = const Size(120, 40),
     this.showArrowIcon = false,
     this.textSize = 16,
+    this.buttonColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
+    final bool isDeleteButton = buttonColor == Colors.red;
+    final Color backgroundColor = isDeleteButton
+        ? Colors.transparent
+        : (buttonColor ?? colorScheme.primary);
+    final Color borderColor =
+        isDeleteButton ? Colors.red : (buttonColor ?? colorScheme.primary);
+    final Color textColor = isDeleteButton ? Colors.red : colorScheme.onPrimary;
+
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        backgroundColor: backgroundColor,
+        foregroundColor: borderColor,
         minimumSize: size,
-        padding: EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: borderColor, width: 2),
         ),
       ),
       onPressed: onPressed,
@@ -37,9 +48,10 @@ class CustomButton extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.w600,
-                fontSize: textSize),
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: textSize,
+            ),
           ),
           if (showArrowIcon) ...[
             const SizedBox(width: 4),
