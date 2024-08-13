@@ -68,6 +68,7 @@ class GoalsPageState extends State<GoalsPage> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: colorScheme.background,
         title: Row(
@@ -165,6 +166,7 @@ class GoalsPageState extends State<GoalsPage> {
                           onTap: () {
                             showModalBottomSheet(
                               context: context,
+                              isScrollControlled: true,
                               builder: (BuildContext context) {
                                 return CustomModal(
                                   textButton: "Atualizar",
@@ -211,6 +213,7 @@ class GoalsPageState extends State<GoalsPage> {
                                         onTap: () {
                                           showModalBottomSheet(
                                             context: context,
+                                            isScrollControlled: true,
                                             builder: (BuildContext context) {
                                               return CustomModal(
                                                 textButton: "Adicionar",
