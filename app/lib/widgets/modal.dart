@@ -89,10 +89,13 @@ class Modal extends StatelessWidget {
                     Navigator.pop(context);
                   },
                 ),
-                if (title == "Editar Meta")
+                if (title.contains("Editar"))
                   CustomButton(
                     text: "Deletar",
-                    onPressed: () {},
+                    onPressed: () {
+                      onDelete();
+                      Navigator.pop(context);
+                    },
                     buttonColor: colorScheme.error,
                   ),
               ],
