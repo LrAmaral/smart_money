@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:smart_money/widgets/custom_button.dart';
-import 'package:smart_money/widgets/custom_input.dart';
+import 'package:smart_money/widgets/modal_input.dart';
+import 'package:smart_money/enums/input_type.dart';
 
-class CustomModal extends StatelessWidget {
+class Modal extends StatelessWidget {
   final String title;
-  final List<Map<String, String>> fields;
+  final List<Map<String, dynamic>> fields;
   final VoidCallback onConfirm;
+  final VoidCallback onDelete;
   final String textButton;
 
-  const CustomModal({
-    Key? key,
+  const Modal({
+    super.key,
     required this.title,
     required this.fields,
     required this.onConfirm,
+    required this.onDelete,
     required this.textButton,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +68,15 @@ class CustomModal extends StatelessWidget {
                   children: fields
                       .map((field) => Padding(
                             padding: const EdgeInsets.only(bottom: 16),
-                            child: CustomInput(
-                              labelText: field['label'] ?? '',
-                              controller: TextEditingController(),
+                            child: ModalInput(
+                              label: field['label'] ?? '',
+                              initialValue: field['value'] ?? '',
+                              type: ModalInputType.values.firstWhere(
+                                (e) =>
+                                    e.toString() ==
+                                    'ModalInputType.${field['type'] ?? 'text'}',
+                                orElse: () => ModalInputType.text,
+                              ),
                             ),
                           ))
                       .toList(),
@@ -80,10 +89,13 @@ class CustomModal extends StatelessWidget {
                     Navigator.pop(context);
                   },
                 ),
-                if (title == "Editar Meta")
+                if (title.contains("Editar"))
                   CustomButton(
                     text: "Deletar",
-                    onPressed: () {},
+                    onPressed: () {
+                      onDelete();
+                      Navigator.pop(context);
+                    },
                     buttonColor: colorScheme.error,
                   ),
               ],

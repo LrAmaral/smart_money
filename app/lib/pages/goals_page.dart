@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
-import 'package:smart_money/widgets/modal_goals.dart';
+import 'package:smart_money/widgets/modal.dart';
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({super.key});
@@ -63,6 +63,77 @@ class GoalsPageState extends State<GoalsPage> {
     super.dispose();
   }
 
+  void _showAddGoalModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Modal(
+          textButton: "Adicionar",
+          title: "Adicionar Meta",
+          fields: const [
+            {'label': 'Nome', 'type': 'text'},
+            {'label': 'Valor Inicial', 'type': 'number'},
+            {'label': 'Valor Final', 'type': 'number'}
+          ],
+          onConfirm: () {},
+          onDelete: () {},
+        );
+      },
+    );
+  }
+
+  void _showEditGoalModal(Map<String, dynamic> goal) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Modal(
+          textButton: "Atualizar",
+          title: "Editar Meta",
+          fields: [
+            {
+              'label': 'Nome',
+              'value': goal['name'],
+              'type': 'text',
+            },
+            {
+              'label': 'Valor Inicial',
+              'value': goal['current'].toString(),
+              'type': 'number',
+            },
+            {
+              'label': 'Valor Final',
+              'value': goal['goal'].toString(),
+              'type': 'number',
+            },
+          ],
+          onConfirm: () {},
+          onDelete: () {},
+        );
+      },
+    );
+  }
+
+  void _showAddBalanceModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Modal(
+          textButton: "Adicionar",
+          title: "Adicionar Saldo",
+          fields: const [
+            {'label': 'Valor', 'type': 'number'}
+          ],
+          onConfirm: () {},
+          onDelete: () {},
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -78,28 +149,18 @@ class GoalsPageState extends State<GoalsPage> {
               'assets/images/logo.png',
               height: 40,
             ),
-            CustomButton(
-                text: 'Adicionar meta',
-                size: const Size(100, 36),
-                showArrowIcon: false,
-                textSize: 12,
-                onPressed: () => showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return CustomModal(
-                          textButton: "Adicionar",
-                          title: "Adicionar Meta",
-                          fields: const [
-                            {'label': 'Nome'},
-                            {'label': 'Valor Inicial'},
-                            {'label': 'Valor Final'}
-                          ],
-                          onConfirm: () {},
-                        );
-                      },
-                    ))
+            Column(
+              children: [
+                const SizedBox(height: 16),
+                CustomButton(
+                  text: 'Adicionar meta',
+                  size: const Size(100, 36),
+                  showArrowIcon: false,
+                  textSize: 12,
+                  onPressed: _showAddGoalModal,
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -164,31 +225,7 @@ class GoalsPageState extends State<GoalsPage> {
 
                         return GestureDetector(
                           onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return CustomModal(
-                                  textButton: "Atualizar",
-                                  title: "Editar Meta",
-                                  fields: [
-                                    {
-                                      'label': goal['name'],
-                                      'value': goal['name']
-                                    },
-                                    {
-                                      'label': goal['current'].toString(),
-                                      'value': goal['current'].toString()
-                                    },
-                                    {
-                                      'label': goal['goal'].toString(),
-                                      'value': goal['goal'].toString()
-                                    },
-                                  ],
-                                  onConfirm: () {},
-                                );
-                              },
-                            );
+                            _showEditGoalModal(goal);
                           },
                           child: Card(
                             color: colorScheme.secondary,
@@ -211,26 +248,11 @@ class GoalsPageState extends State<GoalsPage> {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            builder: (BuildContext context) {
-                                              return CustomModal(
-                                                textButton: "Adicionar",
-                                                title: "Adicionar Saldo",
-                                                fields: const [
-                                                  {'label': 'Valor'},
-                                                ],
-                                                onConfirm: () {},
-                                              );
-                                            },
-                                          );
+                                          _showAddBalanceModal();
                                         },
                                         child: Icon(
                                           Icons.add,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color: colorScheme.primary,
                                           size: 28,
                                         ),
                                       )
