@@ -27,12 +27,14 @@ class ProfilePage extends StatelessWidget {
               CustomInput(
                 labelText: 'antonio.dourado@gmail.com',
                 controller: emailController,
+                enable: false,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               CustomInput(
                 labelText: 'Antonio Dourado',
                 controller: passwordController,
                 obscureText: true,
+                enable: false,
               ),
               const SizedBox(height: 260),
               CustomButton(
