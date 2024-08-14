@@ -11,7 +11,7 @@ class CustomInput extends StatelessWidget {
       required this.labelText,
       required this.controller,
       this.obscureText = false,
-      this.enable = false});
+      this.enable = true});
 
   @override
   Widget build(BuildContext context) {
