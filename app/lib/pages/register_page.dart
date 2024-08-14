@@ -30,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (password == confirmPassword) {
       try {
         final user = UserRegister(email: email, name: name, password: password);
-        await userService.registerUser(user);
+        await userService.register(user);
         context.go('/login');
       } catch (e) {
         print(e);
