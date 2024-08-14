@@ -149,13 +149,18 @@ class GoalsPageState extends State<GoalsPage> {
               'assets/images/logo.png',
               height: 40,
             ),
-            CustomButton(
-              text: 'Adicionar meta',
-              size: const Size(100, 36),
-              showArrowIcon: false,
-              textSize: 12,
-              onPressed: _showAddGoalModal,
-            ),
+            Column(
+              children: [
+                const SizedBox(height: 16),
+                CustomButton(
+                  text: 'Adicionar meta',
+                  size: const Size(100, 36),
+                  showArrowIcon: false,
+                  textSize: 12,
+                  onPressed: _showAddGoalModal,
+                ),
+              ],
+            )
           ],
         ),
       ),

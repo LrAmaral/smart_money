@@ -139,13 +139,18 @@ class TransactionsPageState extends State<TransactionsPage> {
               'assets/images/logo.png',
               height: 40,
             ),
-            CustomButton(
-              text: 'Adicionar transação',
-              size: const Size(100, 36),
-              showArrowIcon: false,
-              textSize: 12,
-              onPressed: _showAddTransactionModal,
-            ),
+            Column(
+              children: [
+                const SizedBox(height: 16),
+                CustomButton(
+                  text: 'Adicionar transação',
+                  size: const Size(100, 36),
+                  showArrowIcon: false,
+                  textSize: 12,
+                  onPressed: _showAddTransactionModal,
+                ),
+              ],
+            )
           ],
         ),
       ),
