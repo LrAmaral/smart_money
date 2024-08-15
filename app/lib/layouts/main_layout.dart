@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_money/pages/home_page.dart';
 import 'package:smart_money/pages/goals_page.dart';
+import 'package:smart_money/pages/profile_page.dart';
 import 'package:smart_money/pages/transactions_page.dart';
 import 'package:smart_money/utils/bottom_navbar.dart';
 
@@ -17,7 +18,7 @@ class MainLayoutState extends State<MainLayout> {
     const HomePage(),
     const TransactionsPage(),
     const GoalsPage(),
-    const HomePage(),
+    const ProfilePage()
   ];
 
   void _onItemTapped(int index) {

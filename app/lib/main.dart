@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_money/pages/edit_password_page.dart';
+import 'package:smart_money/pages/edit_profile_page.dart';
 import 'package:smart_money/pages/first_page.dart';
+import 'package:smart_money/pages/profile_page.dart';
 import 'package:smart_money/pages/register_page.dart';
 import 'package:smart_money/pages/login_page.dart';
 import 'package:smart_money/layouts/main_layout.dart';
@@ -56,7 +58,17 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: RoutePath.profile.path,
           name: RoutePath.profile.name,
-          builder: (context, state) => const MainLayout(),
+          builder: (context, state) => const ProfilePage(),
+        ),
+        GoRoute(
+          path: RoutePath.editProfile.path,
+          name: RoutePath.editProfile.name,
+          builder: (context, state) => const EditProfilePage(),
+        ),
+        GoRoute(
+          path: RoutePath.logout.path,
+          name: RoutePath.logout.name,
+          builder: (context, state) => const FirstPage(),
         ),
       ],
     );
