@@ -21,7 +21,6 @@ model User {
 model Transaction {
   id          String   @id @default(uuid())
   user_id     String
-  card_id     String?
   title       String
   type        String
   category    String
