@@ -24,11 +24,9 @@ class LoginPage extends StatelessWidget {
         final user = LoginUser(email: email, password: password);
         await userService.login(user);
 
-        // Verifica se o token foi definido
         if (userService.authController.accessToken.isNotEmpty) {
           context.go('/home');
         } else {
-          // Se o token não foi definido, exibe um erro
           showDialog(
             context: context,
             builder: (context) => AlertDialog(

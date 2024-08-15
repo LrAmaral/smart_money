@@ -11,7 +11,7 @@ class DashboardService {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     String userId = decodedToken['sub'];
 
-    var url = Uri.parse('http://10.0.2.2:3000/dashboard/$userId');
+    var url = Uri.parse('http://localhost:3000/dashboard/$userId');
 
     try {
       var response = await http.get(

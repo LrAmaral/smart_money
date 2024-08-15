@@ -16,7 +16,7 @@ class TransactionService {
   }
 
   Future<void> registerTransaction(Map<String, dynamic> goalData) async {
-    var url = Uri.parse('http://10.0.2.2:3000/transaction');
+    var url = Uri.parse('http://localhost:3000/transaction');
     final AuthController authController = Get.put(AuthController());
     final token = authController.getAccessToken();
 

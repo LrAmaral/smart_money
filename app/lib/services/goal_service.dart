@@ -16,7 +16,7 @@ class GoalService {
   }
 
   Future<void> registerGoal(Map<String, dynamic> goalData) async {
-    var url = Uri.parse('http://10.0.2.2:3000/goal');
+    var url = Uri.parse('http://localhost:3000/goal');
     final AuthController authController = Get.put(AuthController());
     final token = authController.getAccessToken();
 

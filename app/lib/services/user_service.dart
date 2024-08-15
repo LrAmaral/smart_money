@@ -10,71 +10,70 @@ class UserService {
   final AuthController _authController = Get.put(AuthController());
 
   AuthController get authController => _authController;
+  final Logger _logger = Logger('TransactionService');
+
+  UserService() {
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      _logger.log(record.level,
+          '${record.level.name}: ${record.time}: ${record.message}');
+    });
+  }
 
   Future<void> register(UserRegister user) async {
-    final Logger _logger = Logger('TransactionService');
+    var url = Uri.parse('http://localhost:3000/user');
 
-    UserService() {
-      Logger.root.level = Level.ALL;
-      Logger.root.onRecord.listen((record) {
-        _logger.log(record.level,
-            '${record.level.name}: ${record.time}: ${record.message}');
-      });
-    }
+    var userJson = user.toRegisterJson();
 
-    Future<void> registerUser(UserRegister user) async {
-      var url = Uri.parse('http://10.0.2.2:3000/user');
+    try {
+      var response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(userJson),
+      );
 
-      var userJson = user.toRegisterJson();
-
-      try {
-        var response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: json.encode(userJson),
-        );
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          _logger.info('Usuário cadastrado com sucesso!');
-        } else {
-          _logger.severe(
-              'Falha ao cadastrar usuário. Status: ${response.statusCode}');
-          _logger.info('Mensagem de erro: ${response.body}');
-        }
-      } catch (e) {
-        _logger.severe('Erro ao fazer requisição: $e');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _logger.info('Usuário cadastrado com sucesso!');
+      } else {
+        _logger.severe(
+            'Falha ao cadastrar usuário. Status: ${response.statusCode}');
+        _logger.info('Mensagem de erro: ${response.body}');
       }
+    } catch (e) {
+      _logger.severe('Erro ao fazer requisição: $e');
     }
+  }
 
-    Future<void> login(LoginUser user) async {
-      var url = Uri.parse('http://10.0.2.2:3000/login');
+  Future<void> login(LoginUser user) async {
+    var url = Uri.parse('http://localhost:3000/login');
 
-      var userJson = user.toLoginJson();
+    var userJson = user.toLoginJson();
 
-      try {
-        var response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: json.encode(userJson),
-        );
+    try {
+      _logger.info("Chegou aqui");
+      var response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(userJson),
+      );
 
-        if (response.statusCode == 200) {
-          _logger.info('Usuário logado com sucesso!');
-          final jsonResponse = json.decode(response.body);
-          final token = jsonResponse['access_token'];
-          _authController.setAccessToken(token);
-        } else {
-          _logger
-              .severe('Falha ao fazer login. Status: ${response.statusCode}');
-          _logger.info('Mensagem de erro: ${response.body}');
-        }
-      } catch (e) {
-        _logger.severe('Erro ao fazer requisição: $e');
+      _logger.info(response);
+
+      if (response.statusCode == 200) {
+        _logger.info('Usuário logado com sucesso!');
+        final jsonResponse = json.decode(response.body);
+        final token = jsonResponse['access_token'];
+        _authController.setAccessToken(token);
+      } else {
+        _logger.severe('Falha ao fazer login. Status: ${response.statusCode}');
+        _logger.info('Mensagem de erro: ${response.body}');
       }
+    } catch (e) {
+      _logger.severe('Erro ao fazer requisição: $e');
     }
   }
 }
