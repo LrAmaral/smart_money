@@ -37,6 +37,6 @@ export class AuthService {
       if (isPasswordValid) return { ...user, password: undefined };
     }
 
-    throw new UnauthorizedError('Email or password provided is incorrect.');
+    throw new UnauthorizedError('E-mail ou senha incorretos.');
   }
 }
