@@ -1,22 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:logging/logging.dart';
+import 'package:get/get.dart';
 import 'package:smart_money/api/register_user.dart';
+import 'package:smart_money/api/login_user.dart';
+import 'package:smart_money/controller/auth_controller.dart';
+import 'package:smart_money/services/logger_service.dart';
 
 class UserService {
-  final Logger _logger = Logger('TransactionService');
+  final logger = LoggerService();
+  final AuthController _authController = Get.put(AuthController());
+  AuthController get authController => _authController;
 
-  UserService() {
-    Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen((record) {
-      _logger.log(record.level,
-          '${record.level.name}: ${record.time}: ${record.message}');
-    });
-  }
-
-  Future<void> registerUser(UserRegister user) async {
+  Future<void> register(UserRegister user) async {
     var url = Uri.parse('http://10.0.2.2:3000/user');
-
     var userJson = user.toRegisterJson();
 
     try {
@@ -28,15 +24,43 @@ class UserService {
         body: json.encode(userJson),
       );
 
-      if (response.statusCode == 201) {
-        _logger.info('Usuário cadastrado com sucesso!');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.info('Usuário cadastrado com sucesso!');
       } else {
-        _logger.severe(
+        logger.error(
             'Falha ao cadastrar usuário. Status: ${response.statusCode}');
-        _logger.info('Mensagem de erro: ${response.body}');
+        logger.error('Mensagem de erro: ${response.body}');
       }
     } catch (e) {
-      _logger.severe('Erro ao fazer requisição: $e');
+      logger.error('Erro ao fazer requisição.', error: e);
+    }
+  }
+
+  Future<void> login(LoginUser user) async {
+    var url = Uri.parse('http://10.0.2.2:3000/login');
+
+    var userJson = user.toLoginJson();
+
+    try {
+      var response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(userJson),
+      );
+
+      if (response.statusCode == 200) {
+        logger.info('Usuário logado com sucesso!');
+        final jsonResponse = json.decode(response.body);
+        final token = jsonResponse['access_token'];
+        _authController.setAccessToken(token);
+      } else {
+        logger.error('Falha ao fazer login. Status: ${response.statusCode}');
+        logger.error('Mensagem de erro: ${response.body}');
+      }
+    } catch (e) {
+      logger.error('Erro ao fazer requisição.', error: e);
     }
   }
 }

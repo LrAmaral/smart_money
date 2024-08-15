@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
+import 'package:smart_money/services/user_service.dart';
+import 'package:smart_money/api/login_user.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -10,7 +13,56 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    final UserService userService = UserService();
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    void handleLogin() async {
+      final email = emailController.text;
+      final password = passwordController.text;
+
+      try {
+        final user = LoginUser(email: email, password: password);
+        await userService.login(user);
+
+        if (userService.authController.accessToken.isNotEmpty) {
+          context.go('/home');
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erro'),
+              content: const Text(
+                  'Falha ao fazer login. Verifique suas credenciais.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Erro'),
+            content:
+                const Text('Falha ao fazer login. Verifique suas credenciais.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -66,9 +118,7 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 48),
               CustomButton(
                 text: 'Login',
-                onPressed: () {
-                  context.go('/home');
-                },
+                onPressed: handleLogin,
               ),
               const SizedBox(height: 16),
               InkWell(

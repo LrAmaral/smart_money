@@ -27,6 +27,12 @@ export class TransactionService {
     });
   }
 
+  findByUser(user_id: string) {
+    return this.prisma.transaction.findMany({
+      where: { user_id: user_id },
+    });
+  }
+
   async update(id: string, updateTransactionDto: UpdateTransactionDto) {
     return await this.prisma.transaction.update({
       where: { id },
