@@ -1,28 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:logging/logging.dart';
 import 'package:smart_money/api/register_user.dart';
 import 'package:smart_money/api/login_user.dart';
 import 'package:smart_money/controller/auth_controller.dart';
+import 'package:smart_money/services/logger_service.dart';
 
 class UserService {
+  final logger = LoggerService();
   final AuthController _authController = Get.put(AuthController());
-
   AuthController get authController => _authController;
-  final Logger _logger = Logger('TransactionService');
-
-  UserService() {
-    Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen((record) {
-      _logger.log(record.level,
-          '${record.level.name}: ${record.time}: ${record.message}');
-    });
-  }
 
   Future<void> register(UserRegister user) async {
-    var url = Uri.parse('http://localhost:3000/user');
-
+    var url = Uri.parse('http://10.0.2.2:3000/user');
     var userJson = user.toRegisterJson();
 
     try {
@@ -35,24 +25,23 @@ class UserService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        _logger.info('Usuário cadastrado com sucesso!');
+        logger.info('Usuário cadastrado com sucesso!');
       } else {
-        _logger.severe(
+        logger.error(
             'Falha ao cadastrar usuário. Status: ${response.statusCode}');
-        _logger.info('Mensagem de erro: ${response.body}');
+        logger.error('Mensagem de erro: ${response.body}');
       }
     } catch (e) {
-      _logger.severe('Erro ao fazer requisição: $e');
+      logger.error('Erro ao fazer requisição.', error: e);
     }
   }
 
   Future<void> login(LoginUser user) async {
-    var url = Uri.parse('http://localhost:3000/login');
+    var url = Uri.parse('http://10.0.2.2:3000/login');
 
     var userJson = user.toLoginJson();
 
     try {
-      _logger.info("Chegou aqui");
       var response = await http.post(
         url,
         headers: {
@@ -61,19 +50,17 @@ class UserService {
         body: json.encode(userJson),
       );
 
-      _logger.info(response);
-
       if (response.statusCode == 200) {
-        _logger.info('Usuário logado com sucesso!');
+        logger.info('Usuário logado com sucesso!');
         final jsonResponse = json.decode(response.body);
         final token = jsonResponse['access_token'];
         _authController.setAccessToken(token);
       } else {
-        _logger.severe('Falha ao fazer login. Status: ${response.statusCode}');
-        _logger.info('Mensagem de erro: ${response.body}');
+        logger.error('Falha ao fazer login. Status: ${response.statusCode}');
+        logger.error('Mensagem de erro: ${response.body}');
       }
     } catch (e) {
-      _logger.severe('Erro ao fazer requisição: $e');
+      logger.error('Erro ao fazer requisição.', error: e);
     }
   }
 }

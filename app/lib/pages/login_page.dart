@@ -45,7 +45,6 @@ class LoginPage extends StatelessWidget {
           );
         }
       } catch (e) {
-        print('Erro durante o login: $e');
         showDialog(
           context: context,
           builder: (context) => AlertDialog(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smart_money/services/dashboard_service.dart';
-import '../api/mock_api.dart';
 import '../widgets/info_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,8 +16,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _dashboardData = fetchDashboardData();
-    dashboardService.getData();
+    _dashboardData = dashboardService.getData();
+    print(_dashboardData);
   }
 
   @override
@@ -38,8 +37,11 @@ class _HomePageState extends State<HomePage> {
                 return const Center(child: Text('No data available'));
               } else {
                 var data = snapshot.data!;
-                var user = data['user'];
-                var dashboard = data['dashboard'];
+                var user = data['user'] ?? {'name': 'Usuário'};
+                double balance = data['balance']?.toDouble() ?? 0.0;
+                int transactionsTotal = data['transactionsTotal'] ?? 0;
+                int goalsTotal = data['goalsTotal'] ?? 0;
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -66,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                     InfoCard(
                       title: 'Saldo Geral',
                       subtitle: 'Últimos 30 dias',
-                      value: 'R\$ ${dashboard['balance'].toStringAsFixed(2)}',
+                      value: 'R\$ ${balance.toStringAsFixed(2)}',
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -76,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                           child: InfoCard(
                             title: 'Transações',
                             subtitle: 'Últimos 30 dias',
-                            value: '${dashboard['transactions']}',
+                            value: transactionsTotal.toString(),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -84,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                           child: InfoCard(
                             title: 'Metas',
                             subtitle: 'Total',
-                            value: '${dashboard['goals']}',
+                            value: goalsTotal.toString(),
                           ),
                         ),
                       ],

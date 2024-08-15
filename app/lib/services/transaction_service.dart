@@ -2,22 +2,14 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:smart_money/controller/auth_controller.dart';
-import 'package:logging/logging.dart';
+import 'package:smart_money/services/logger_service.dart';
 
 class TransactionService {
-  final Logger _logger = Logger('TransactionService');
-
-  TransactionService() {
-    Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen((record) {
-      _logger.log(record.level,
-          '${record.level.name}: ${record.time}: ${record.message}');
-    });
-  }
+  final logger = LoggerService();
+  final AuthController authController = Get.put(AuthController());
 
   Future<void> registerTransaction(Map<String, dynamic> goalData) async {
-    var url = Uri.parse('http://localhost:3000/transaction');
-    final AuthController authController = Get.put(AuthController());
+    var url = Uri.parse('http://10.0.2.2:3000/transaction');
     final token = authController.getAccessToken();
 
     try {
@@ -31,14 +23,14 @@ class TransactionService {
       );
 
       if (response.statusCode == 201) {
-        _logger.info('Transação cadastrada com sucesso!');
+        logger.info('Transação cadastrada com sucesso!');
       } else {
-        _logger.warning(
+        logger.error(
             'Falha ao cadastrar transação. Status: ${response.statusCode}');
-        _logger.warning('Mensagem de erro: ${response.body}');
+        logger.error('Mensagem de erro: ${response.body}');
       }
     } catch (e) {
-      _logger.severe('Erro ao fazer requisição: $e');
+      logger.error('Erro ao fazer requisição.', error: e);
     }
   }
 }
