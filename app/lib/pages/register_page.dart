@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logging/logging.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/services/user_service.dart';
@@ -13,6 +14,16 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final Logger _logger = Logger('TransactionService');
+
+  _RegisterPageState() {
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      _logger.log(record.level,
+          '${record.level.name}: ${record.time}: ${record.message}');
+    });
+  }
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -33,10 +44,10 @@ class _RegisterPageState extends State<RegisterPage> {
         await userService.register(user);
         context.go('/login');
       } catch (e) {
-        print(e);
+        _logger.severe(e);
       }
     } else {
-      print('Senhas não correspondem');
+      _logger.severe('Senhas não correspondem');
     }
   }
 
