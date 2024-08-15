@@ -27,6 +27,12 @@ export class GoalService {
     });
   }
 
+  findByUser(user_id: string) {
+    return this.prisma.goal.findMany({
+      where: { user_id: user_id },
+    });
+  }
+
   async update(id: string, updateGoalDto: UpdateGoalDto) {
     return await this.prisma.goal.update({
       where: { id },

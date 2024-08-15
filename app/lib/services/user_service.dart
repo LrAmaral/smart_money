@@ -8,6 +8,8 @@ import 'package:smart_money/controller/auth_controller.dart';
 class UserService {
   final AuthController _authController = Get.put(AuthController());
 
+  AuthController get authController => _authController;
+
   Future<void> register(UserRegister user) async {
     var url = Uri.parse('http://10.0.2.2:3000/user');
 
@@ -22,7 +24,7 @@ class UserService {
         body: json.encode(userJson),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('Usuário cadastrado com sucesso!');
       } else {
         print('Falha ao cadastrar usuário. Status: ${response.statusCode}');
@@ -47,7 +49,7 @@ class UserService {
         body: json.encode(userJson),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print('Usuário logado com sucesso!');
         final jsonResponse = json.decode(response.body);
         final token = jsonResponse['access_token'];

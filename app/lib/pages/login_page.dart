@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
@@ -22,7 +23,29 @@ class LoginPage extends StatelessWidget {
       try {
         final user = LoginUser(email: email, password: password);
         await userService.login(user);
-        context.go('/home');
+
+        // Verifica se o token foi definido
+        if (userService.authController.accessToken.isNotEmpty) {
+          context.go('/home');
+        } else {
+          // Se o token não foi definido, exibe um erro
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erro'),
+              content: const Text(
+                  'Falha ao fazer login. Verifique suas credenciais.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        }
       } catch (e) {
         print('Erro durante o login: $e');
         showDialog(
