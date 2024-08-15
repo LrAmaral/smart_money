@@ -6,7 +6,9 @@ enum RoutePath {
   home(path: '/home'),
   extract(path: '/extract'),
   goals(path: '/goals'),
-  profile(path: '/profile');
+  profile(path: '/profile'),
+  editProfile(path: '/edit_profile'),
+  logout(path: '/');
 
   const RoutePath({required this.path});
 
