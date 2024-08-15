@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_money/services/dashboard_service.dart';
 import '../api/mock_api.dart';
 import '../widgets/info_card.dart';
 
@@ -11,11 +12,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<Map<String, dynamic>> _dashboardData;
+  final DashboardService dashboardService = DashboardService();
 
   @override
   void initState() {
     super.initState();
     _dashboardData = fetchDashboardData();
+    dashboardService.getData();
   }
 
   @override

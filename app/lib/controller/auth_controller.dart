@@ -6,4 +6,8 @@ class AuthController extends GetxController {
   void setAccessToken(String token) {
     accessToken.value = token;
   }
+
+  String getAccessToken() {
+    return accessToken.value;
+  }
 }
