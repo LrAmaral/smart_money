@@ -1,8 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logging/logging.dart';
 import 'package:smart_money/api/register_user.dart';
 
 class UserService {
+  final Logger _logger = Logger('TransactionService');
+
+  UserService() {
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      _logger.log(record.level,
+          '${record.level.name}: ${record.time}: ${record.message}');
+    });
+  }
+
   Future<void> registerUser(UserRegister user) async {
     var url = Uri.parse('http://10.0.2.2:3000/user');
 
@@ -18,13 +29,14 @@ class UserService {
       );
 
       if (response.statusCode == 201) {
-        print('Usuário cadastrado com sucesso!');
+        _logger.info('Usuário cadastrado com sucesso!');
       } else {
-        print('Falha ao cadastrar usuário. Status: ${response.statusCode}');
-        print('Mensagem de erro: ${response.body}');
+        _logger.severe(
+            'Falha ao cadastrar usuário. Status: ${response.statusCode}');
+        _logger.info('Mensagem de erro: ${response.body}');
       }
     } catch (e) {
-      print('Erro ao fazer requisição: $e');
+      _logger.severe('Erro ao fazer requisição: $e');
     }
   }
 }
