@@ -10,12 +10,10 @@ export class DashboardService {
       balance: transactions.length > 0 ? this.getBalance(transactions) : 0,
       transactionsTotal: transactions.length || 0,
       goalsTotal: goals.length || 0,
-    }
+    };
   }
 
   getBalance(transaction: any) {
-    console.log(transaction[0].amount);
-
     var balance = transaction.reduce(
       (accumulator, currentValue) => accumulator + currentValue.amount,
       0,
@@ -23,5 +21,4 @@ export class DashboardService {
 
     return balance;
   }
-
 }

@@ -5,7 +5,6 @@ import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/services/user_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/services/logger_service.dart';
-import 'package:smart_money/services/profile_service.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -22,18 +21,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String id;
   final UserService userService = UserService();
   final logger = LoggerService();
+  bool _isDataLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    final profileService = ProfileService();
-    final userData = profileService.getUserDataFromToken();
-
-    id = userData['id'] ?? '';
-    emailController = TextEditingController(text: userData['email'] ?? '');
-    nameController = TextEditingController(text: userData['name'] ?? '');
+    emailController = TextEditingController();
+    nameController = TextEditingController();
     newPasswordController = TextEditingController();
     confirmPasswordController = TextEditingController();
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    try {
+      final userData = await userService.getProfile();
+
+      if (userData != null) {
+        setState(() {
+          id = userData['id'] ?? '';
+          emailController.text = userData['email'] ?? '';
+          nameController.text = userData['name'] ?? '';
+          _isDataLoaded = true;
+        });
+      } else {
+        logger.error('Os dados do usuário não puderam ser carregados.');
+      }
+    } catch (e) {
+      logger.error('Erro ao carregar dados do usuário', error: e);
+    }
   }
 
   @override
@@ -105,33 +121,39 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
               const SizedBox(height: 64),
-              CustomInput(
-                labelText: 'Email',
-                controller: emailController,
-              ),
-              const SizedBox(height: 16),
-              CustomInput(
-                labelText: 'Nome',
-                controller: nameController,
-              ),
-              const SizedBox(height: 16),
-              CustomInput(
-                labelText: 'Nova Senha',
-                controller: newPasswordController,
-                obscureText: true,
-              ),
-              const SizedBox(height: 16),
-              CustomInput(
-                labelText: 'Confirmar Nova Senha',
-                controller: confirmPasswordController,
-                obscureText: true,
-              ),
-              const SizedBox(height: 160),
-              CustomButton(
-                text: 'Salvar',
-                onPressed: handleEditProfile,
-                size: const Size(100, 52),
-              ),
+              if (_isDataLoaded) ...[
+                CustomInput(
+                  labelText: 'Email',
+                  controller: emailController,
+                ),
+                const SizedBox(height: 16),
+                CustomInput(
+                  labelText: 'Nome',
+                  controller: nameController,
+                ),
+                const SizedBox(height: 16),
+                CustomInput(
+                  labelText: 'Nova Senha',
+                  controller: newPasswordController,
+                  obscureText: true,
+                ),
+                const SizedBox(height: 16),
+                CustomInput(
+                  labelText: 'Confirmar Nova Senha',
+                  controller: confirmPasswordController,
+                  obscureText: true,
+                ),
+                const SizedBox(height: 160),
+                CustomButton(
+                  text: 'Salvar',
+                  onPressed: handleEditProfile,
+                  size: const Size(100, 52),
+                ),
+              ] else ...[
+                const Center(
+                    child:
+                        CircularProgressIndicator()), // Indicador de carregamento
+              ],
               const SizedBox(height: 60),
             ],
           ),

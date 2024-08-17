@@ -88,6 +88,7 @@ class MyApp extends StatelessWidget {
       onError: Colors.white,
       surfaceTint: const Color(0xFF646464),
       brightness: Brightness.dark,
+      surfaceVariant: const Color.fromARGB(255, 100, 100, 100),
     );
 
     return MaterialApp.router(

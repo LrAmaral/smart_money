@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:smart_money/api/register_user.dart';
 import 'package:smart_money/api/login_user.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
+import 'package:smart_money/constants/env.dart';
 
 class UserService {
   final logger = LoggerService();
@@ -12,7 +14,7 @@ class UserService {
   AuthController get authController => _authController;
 
   Future<void> register(UserRegister user) async {
-    var url = Uri.parse('http://10.0.2.2:3000/user');
+    var url = Uri.parse('${ApiConstants.baseUrl}/user');
     var userJson = user.toRegisterJson();
 
     try {
@@ -37,7 +39,7 @@ class UserService {
   }
 
   Future<void> login(LoginUser user) async {
-    var url = Uri.parse('http://10.0.2.2:3000/login');
+    var url = Uri.parse('${ApiConstants.baseUrl}/login');
 
     var userJson = user.toLoginJson();
 
@@ -64,9 +66,9 @@ class UserService {
     }
   }
 
-  Future<void> editProfile(Map<String, dynamic> user, userId) async {
+  Future<void> editProfile(Map<String, dynamic> user, String userId) async {
     var token = authController.getAccessToken();
-    var url = Uri.parse('http://10.0.2.2:3000/user/$userId');
+    var url = Uri.parse('${ApiConstants.baseUrl}/user/$userId');
 
     try {
       var response = await http.patch(
@@ -87,6 +89,40 @@ class UserService {
       }
     } catch (e) {
       logger.error('Erro ao fazer requisição.', error: e);
+    }
+  }
+
+  Future<Map<String, dynamic>?> getProfile() async {
+    final token = authController.getAccessToken();
+
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    String userId = decodedToken['sub'];
+
+    var url = Uri.parse('${ApiConstants.baseUrl}/user/$userId');
+
+    try {
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        logger.info('Perfil carregado com sucesso!');
+        final profileData = json.decode(response.body) as Map<String, dynamic>;
+        _authController.setUserProfile(profileData);
+        return profileData;
+      } else {
+        logger
+            .error('Falha ao carregar perfil. Status: ${response.statusCode}');
+        logger.error('Mensagem de erro: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      logger.error('Erro ao fazer requisição.', error: e);
+      return null;
     }
   }
 }

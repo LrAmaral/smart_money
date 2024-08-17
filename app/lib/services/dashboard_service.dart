@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
+import 'package:smart_money/constants/env.dart';
 
 class DashboardService {
   Future<Map<String, dynamic>> getData() async {
@@ -13,10 +14,8 @@ class DashboardService {
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     String userId = decodedToken['sub'];
-    String userName = decodedToken['name'];
-    String userEmail = decodedToken['email'];
 
-    var url = Uri.parse('http://10.0.2.2:3000/dashboard/$userId');
+    var url = Uri.parse('${ApiConstants.baseUrl}/dashboard/$userId');
 
     try {
       var response = await http.get(
@@ -28,16 +27,10 @@ class DashboardService {
       );
 
       if (response.statusCode == 200) {
-        Map<String, dynamic> dashboardData =
+        Map<String, dynamic> data =
             Map<String, dynamic>.from(json.decode(response.body));
 
-        return {
-          "user": {
-            "name": userName,
-            "email": userEmail,
-          },
-          "dashboard": dashboardData,
-        };
+        return data;
       } else {
         logger.error('Falha ao consultado dados: ${response.body}');
         return {};
