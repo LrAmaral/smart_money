@@ -45,6 +45,6 @@ export class TransactionService {
       where: { id },
     });
 
-    return { message: 'Transaction deleted successfully' };
+    return { message: 'Transação excluída com sucesso' };
   }
 }

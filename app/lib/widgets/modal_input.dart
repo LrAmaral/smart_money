@@ -1,17 +1,19 @@
-import 'package:smart_money/enums/input_type.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smart_money/enums/input_type.dart';
 
 class ModalInput extends StatefulWidget {
   final String label;
   final String initialValue;
   final ModalInputType type;
+  final TextEditingController? controller;
 
   const ModalInput({
     super.key,
     required this.label,
     required this.initialValue,
     required this.type,
+    this.controller,
   });
 
   @override
@@ -25,7 +27,8 @@ class _ModalInputState extends State<ModalInput> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue);
+    _controller =
+        widget.controller ?? TextEditingController(text: widget.initialValue);
   }
 
   void _selectDate(BuildContext context) async {
@@ -61,9 +64,10 @@ class _ModalInputState extends State<ModalInput> {
           : null,
       decoration: InputDecoration(
         labelText: widget.label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 100, 100, 100)),
+        labelStyle: TextStyle(color: colorScheme.surfaceTint),
         filled: true,
         isDense: true,
+        fillColor: Colors.transparent,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
         border: OutlineInputBorder(
@@ -73,11 +77,19 @@ class _ModalInputState extends State<ModalInput> {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: colorScheme.primary),
         ),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 100, 100, 100)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: colorScheme.surfaceTint),
         ),
       ),
-      style: const TextStyle(color: Color.fromARGB(255, 100, 100, 100)),
+      style: TextStyle(color: colorScheme.surfaceTint),
     );
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
+    super.dispose();
   }
 }

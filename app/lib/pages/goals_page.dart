@@ -77,8 +77,9 @@ class GoalsPageState extends State<GoalsPage> {
             {'label': 'Valor Inicial', 'type': 'number'},
             {'label': 'Valor Final', 'type': 'number'}
           ],
-          onConfirm: () {},
-          onDelete: () {},
+          onConfirm: (data) {
+            print(data);
+          },
         );
       },
     );
@@ -109,7 +110,9 @@ class GoalsPageState extends State<GoalsPage> {
               'type': 'number',
             },
           ],
-          onConfirm: () {},
+          onConfirm: (data) {
+            print(data);
+          },
           onDelete: () {},
         );
       },
@@ -127,8 +130,9 @@ class GoalsPageState extends State<GoalsPage> {
           fields: const [
             {'label': 'Valor', 'type': 'number'}
           ],
-          onConfirm: () {},
-          onDelete: () {},
+          onConfirm: (data) {
+            print(data);
+          },
         );
       },
     );

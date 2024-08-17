@@ -20,15 +20,14 @@ export class GoalController {
     return this.goalService.create(createGoalDto);
   }
 
-  //TODO: Implementar Decorator para que somente o admin possa acessar
   @Get()
   findAll() {
     return this.goalService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.goalService.findOne(id);
+  @Get(':userId')
+  findOne(@Param('userId') userId: string) {
+    return this.goalService.findByUser(userId);
   }
 
   @Patch(':id')

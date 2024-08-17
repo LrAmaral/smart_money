@@ -16,8 +16,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _dashboardData = dashboardService.getData();
-    print(_dashboardData);
+    loadDashboardData();
+  }
+
+  void loadDashboardData() {
+    setState(() {
+      _dashboardData = dashboardService.getData();
+    });
   }
 
   @override

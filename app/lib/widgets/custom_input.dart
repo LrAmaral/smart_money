@@ -23,9 +23,10 @@ class CustomInput extends StatelessWidget {
       enabled: enable,
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 100, 100, 100)),
+        labelStyle: TextStyle(color: colorScheme.surfaceTint),
         filled: true,
         isDense: true,
+        fillColor: Colors.transparent,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
         border: OutlineInputBorder(
@@ -35,11 +36,11 @@ class CustomInput extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: colorScheme.primary),
         ),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 100, 100, 100)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: colorScheme.surfaceTint),
         ),
       ),
-      style: const TextStyle(color: Color.fromARGB(255, 100, 100, 100)),
+      style: TextStyle(color: colorScheme.surfaceTint),
     );
   }
 }
