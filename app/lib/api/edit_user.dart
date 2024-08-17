@@ -24,7 +24,7 @@ class EditUser {
   Map<String, dynamic> toJson() => {
         "email": email,
         "name": name,
-        "password": password,
+        if (password != null && password!.isNotEmpty) "password": password,
       };
 }
 

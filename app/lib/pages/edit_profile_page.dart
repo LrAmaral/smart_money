@@ -52,12 +52,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final confirmPassword = confirmPasswordController.text;
     final userId = id;
 
-    if (password == confirmPassword) {
+    if (password.isEmpty || password == confirmPassword) {
       try {
-        final user = EditUser(email: email, name: name, password: password);
+        final user = EditUser(
+          email: email,
+          name: name,
+          password: password.isNotEmpty ? password : null,
+        );
+
         final userMap = user.toEditJson();
-        await userService.editProfile(userMap, userId);
-        context.pop();
+
+        if (userMap.isNotEmpty) {
+          await userService.editProfile(userMap, userId);
+          context.pop();
+        } else {
+          logger.error('Nenhuma informação foi alterada.');
+        }
       } catch (e) {
         logger.error(e);
       }
