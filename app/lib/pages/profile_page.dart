@@ -40,7 +40,7 @@ class ProfilePage extends StatelessWidget {
               CustomButton(
                 text: 'Alterar Dados',
                 onPressed: () {
-                  context.go('/edit_profile');
+                  context.push('/edit_profile');
                 },
                 size: const Size(100, 52),
               ),

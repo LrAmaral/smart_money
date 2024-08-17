@@ -22,7 +22,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.primary),
           onPressed: () {
-            context.go('/');
+            context.pop();
           },
         ),
       ),
