@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
+import 'package:smart_money/widgets/custom_button.dart';
+import 'package:smart_money/services/profile_service.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
+    final ProfileService profileService = ProfileService();
+    final userData = profileService.getUserDataFromToken();
+
+    final TextEditingController nameController =
+        TextEditingController(text: userData['name']);
+    final TextEditingController emailController =
+        TextEditingController(text: userData['email']);
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -22,18 +28,19 @@ class ProfilePage extends StatelessWidget {
             children: <Widget>[
               const SizedBox(height: 60),
               const Image(
-                  width: 200, image: AssetImage('assets/images/logo.png')),
+                width: 200,
+                image: AssetImage('assets/images/logo.png'),
+              ),
               const SizedBox(height: 64),
               CustomInput(
-                labelText: 'antonio.dourado@gmail.com',
+                labelText: 'Email',
                 controller: emailController,
                 enable: false,
               ),
               const SizedBox(height: 20),
               CustomInput(
-                labelText: 'Antonio Dourado',
-                controller: passwordController,
-                obscureText: true,
+                labelText: 'Nome',
+                controller: nameController,
                 enable: false,
               ),
               const SizedBox(height: 260),
