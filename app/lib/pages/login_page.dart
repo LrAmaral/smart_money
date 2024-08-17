@@ -90,7 +90,7 @@ class LoginPage extends StatelessWidget {
                   width: 200, image: AssetImage('assets/images/logo.png')),
               const SizedBox(height: 64),
               CustomInput(
-                labelText: 'Email',
+                labelText: 'E-mail',
                 controller: emailController,
               ),
               const SizedBox(height: 16),

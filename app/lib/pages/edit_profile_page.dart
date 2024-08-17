@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:smart_money/widgets/custom_button.dart';
+import 'package:smart_money/api/edit_user.dart';
 import 'package:smart_money/widgets/custom_input.dart';
+import 'package:smart_money/services/user_service.dart';
+import 'package:smart_money/widgets/custom_button.dart';
+import 'package:smart_money/services/logger_service.dart';
+import 'package:smart_money/services/profile_service.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -11,10 +15,69 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  late TextEditingController emailController;
+  late TextEditingController nameController;
+  late TextEditingController newPasswordController;
+  late TextEditingController confirmPasswordController;
+  late String id;
+  final UserService userService = UserService();
+  final logger = LoggerService();
+
+  @override
+  void initState() {
+    super.initState();
+    final profileService = ProfileService();
+    final userData = profileService.getUserDataFromToken();
+
+    id = userData['id'] ?? '';
+    emailController = TextEditingController(text: userData['email'] ?? '');
+    nameController = TextEditingController(text: userData['name'] ?? '');
+    newPasswordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    nameController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void handleEditProfile() async {
+    final name = nameController.text;
+    final email = emailController.text;
+    final password = newPasswordController.text;
+    final confirmPassword = confirmPasswordController.text;
+    final userId = id;
+
+    if (password.isEmpty || password == confirmPassword) {
+      try {
+        final user = EditUser(
+          email: email,
+          name: name,
+          password: password.isNotEmpty ? password : null,
+        );
+
+        final userMap = user.toEditJson();
+
+        if (userMap.isNotEmpty) {
+          await userService.editProfile(userMap, userId);
+          context.pop();
+        } else {
+          logger.error('Nenhuma informação foi alterada.');
+        }
+      } catch (e) {
+        logger.error(e);
+      }
+    } else {
+      logger.error('Senhas não correspondem');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -22,7 +85,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.primary),
           onPressed: () {
-            context.go('/');
+            context.pop();
           },
         ),
       ),
@@ -36,37 +99,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Text(
                 'Dados Cadastrais',
                 style: TextStyle(
-                    fontSize: 36,
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600),
+                  fontSize: 36,
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 64),
               CustomInput(
-                labelText: 'antonio.dourado@gmail.com',
+                labelText: 'Email',
                 controller: emailController,
               ),
               const SizedBox(height: 16),
               CustomInput(
-                labelText: 'Antonio Dourado',
-                controller: emailController,
+                labelText: 'Nome',
+                controller: nameController,
               ),
               const SizedBox(height: 16),
               CustomInput(
                 labelText: 'Nova Senha',
-                controller: emailController,
+                controller: newPasswordController,
+                obscureText: true,
               ),
               const SizedBox(height: 16),
               CustomInput(
                 labelText: 'Confirmar Nova Senha',
-                controller: passwordController,
+                controller: confirmPasswordController,
                 obscureText: true,
               ),
               const SizedBox(height: 160),
               CustomButton(
                 text: 'Salvar',
-                onPressed: () {
-                  context.go('/profile');
-                },
+                onPressed: handleEditProfile,
                 size: const Size(100, 52),
               ),
               const SizedBox(height: 60),

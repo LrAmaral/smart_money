@@ -63,4 +63,30 @@ class UserService {
       logger.error('Erro ao fazer requisição.', error: e);
     }
   }
+
+  Future<void> editProfile(Map<String, dynamic> user, userId) async {
+    var token = authController.getAccessToken();
+    var url = Uri.parse('http://10.0.2.2:3000/user/$userId');
+
+    try {
+      var response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(user),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.info('Edição feita com sucesso!');
+      } else {
+        logger
+            .error('Falha ao realizar edição. Status: ${response.statusCode}');
+        logger.error('Mensagem de erro: ${response.body}');
+      }
+    } catch (e) {
+      logger.error('Erro ao fazer requisição.', error: e);
+    }
+  }
 }

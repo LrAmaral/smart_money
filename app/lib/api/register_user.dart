@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-UserRegister welcomeFromJson(String str) =>
+UserRegister userFromJson(String str) =>
     UserRegister.fromJson(json.decode(str));
 
-String welcomeToJson(UserRegister data) => json.encode(data.toJson());
+String userToJson(UserRegister data) => json.encode(data.toJson());
 
 class UserRegister {
   String email;
