@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/user_service.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/custom_button.dart';
@@ -75,7 +77,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 24),
                     CustomButton(
                       text: "Sair do Aplicativo",
-                      onPressed: () {},
+                      onPressed: () {
+                        final AuthController authController =
+                            Get.find<AuthController>();
+                        authController.clearAuthData();
+                        context.go('/login');
+                      },
                       buttonColor: colorScheme.error,
                       size: const Size(100, 52),
                     ),

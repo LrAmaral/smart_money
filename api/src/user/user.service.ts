@@ -76,7 +76,7 @@ export class UserService {
     });
 
     return {
-      message: 'User deleted successfully',
+      message: 'Usuário deletado com sucesso',
     };
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/pages/edit_password_page.dart';
 import 'package:smart_money/pages/edit_profile_page.dart';
 import 'package:smart_money/pages/first_page.dart';
@@ -18,7 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = Get.put(AuthController());
+
     final GoRouter _router = GoRouter(
+      initialLocation:
+          authController.getAccessToken().isNotEmpty ? '/home' : '/login',
       routes: [
         GoRoute(
           path: RoutePath.firstPage.path,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
+import 'package:smart_money/services/transaction_service.dart';
+import 'package:smart_money/enums/input_type.dart';
 
 class TransactionsPage extends StatefulWidget {
   const TransactionsPage({super.key});
@@ -11,40 +13,23 @@ class TransactionsPage extends StatefulWidget {
 }
 
 class TransactionsPageState extends State<TransactionsPage> {
-  final List<Map<String, dynamic>> _transactions = [
-    {
-      'title': 'Hamburger',
-      'amount': -59.00,
-      'category': 'Alimentação',
-      'date': '10/04/2022',
-    },
-    {
-      'title': 'Aluguel do apartamento',
-      'amount': -1200.00,
-      'category': 'Casa',
-      'date': '27/03/2022',
-    },
-    {
-      'title': 'Salário',
-      'amount': 5400.00,
-      'category': 'Salário',
-      'date': '15/02/2022',
-    },
-    {
-      'title': 'Desenvolvimento de site',
-      'amount': 12000.00,
-      'category': 'Venda',
-      'date': '13/04/2022',
-    },
-  ];
-
+  final TransactionService _transactionService = TransactionService();
+  final List<Map<String, dynamic>> _transactions = [];
   List<Map<String, dynamic>> _filteredTransactions = [];
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _filteredTransactions = _transactions;
+    _loadTransactions();
+  }
+
+  void _loadTransactions() async {
+    final transactions = await _transactionService.getTransactions();
+    setState(() {
+      _transactions.addAll(transactions);
+      _filteredTransactions = _transactions;
+    });
   }
 
   void _filterTransactions(String query) {
@@ -61,10 +46,31 @@ class TransactionsPageState extends State<TransactionsPage> {
     _filterTransactions(query);
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  void _addTransaction(Map<String, dynamic> data) async {
+    final newTransaction = {
+      'title': data['Título'],
+      'amount': double.tryParse(data['Valor']) ?? 0.0,
+      'category': data['Categoria'],
+      'date': data['Data'],
+    };
+    await _transactionService.registerTransaction(newTransaction);
+    _loadTransactions();
+  }
+
+  void _editTransaction(String id, Map<String, dynamic> data) async {
+    final updatedTransaction = {
+      'title': data['Título'],
+      'amount': double.tryParse(data['Valor']) ?? 0.0,
+      'category': data['Categoria'],
+      'date': data['Data'],
+    };
+    await _transactionService.editTransaction(id, updatedTransaction);
+    _loadTransactions();
+  }
+
+  void _deleteTransaction(String id) async {
+    await _transactionService.deleteTransaction(id);
+    _loadTransactions();
   }
 
   void _showAddTransactionModal() {
@@ -76,13 +82,16 @@ class TransactionsPageState extends State<TransactionsPage> {
           textButton: 'Adicionar',
           title: 'Nova Transação',
           fields: const [
-            {'label': 'Título', 'type': 'text'},
-            {'label': 'Valor', 'type': 'number'},
-            {'label': 'Categoria', 'type': 'text'},
-            {'label': 'Data', 'type': 'date'},
+            {'label': 'Título', 'type': ModalInputType.text},
+            {'label': 'Valor', 'type': ModalInputType.number},
+            {'label': 'Categoria', 'type': ModalInputType.text},
+            {'label': 'Data', 'type': ModalInputType.date},
           ],
-          onConfirm: () {},
-          onDelete: () {},
+          onConfirm: (data) {
+            _addTransaction(data);
+            Navigator.of(context).pop();
+          },
+          showTransactionTypeButtons: true,
         );
       },
     );
@@ -100,29 +109,41 @@ class TransactionsPageState extends State<TransactionsPage> {
             {
               'label': 'Título',
               'value': transaction['title'],
-              'type': 'text',
+              'type': ModalInputType.text,
             },
             {
               'label': 'Valor',
               'value': transaction['amount'].toString(),
-              'type': 'number',
+              'type': ModalInputType.number,
             },
             {
               'label': 'Categoria',
               'value': transaction['category'],
-              'type': 'text',
+              'type': ModalInputType.text,
             },
             {
               'label': 'Data',
               'value': transaction['date'],
-              'type': 'date',
+              'type': ModalInputType.date,
             },
           ],
-          onConfirm: () {},
-          onDelete: () {},
+          onConfirm: (data) {
+            _editTransaction(transaction['id'], data);
+            Navigator.of(context).pop();
+          },
+          onDelete: () {
+            _deleteTransaction(transaction['id']);
+            Navigator.of(context).pop();
+          },
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override

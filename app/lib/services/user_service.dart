@@ -7,6 +7,7 @@ import 'package:smart_money/api/login_user.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/constants/env.dart';
+import 'package:smart_money/utils/custom_exception.dart';
 
 class UserService {
   final logger = LoggerService();
@@ -29,12 +30,12 @@ class UserService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.info('Usuário cadastrado com sucesso!');
       } else {
-        logger.error(
-            'Falha ao cadastrar usuário. Status: ${response.statusCode}');
-        logger.error('Mensagem de erro: ${response.body}');
+        logger.error('Erro ao cadastrar usuário: ${response.body}');
+        throw CustomException('Erro ao cadastrar usuário');
       }
     } catch (e) {
       logger.error('Erro ao fazer requisição.', error: e);
+      throw CustomException(e.toString());
     }
   }
 
@@ -53,13 +54,12 @@ class UserService {
       );
 
       if (response.statusCode == 200) {
-        logger.info('Usuário logado com sucesso!');
         final jsonResponse = json.decode(response.body);
         final token = jsonResponse['access_token'];
         _authController.setAccessToken(token);
+        logger.info('Usuário logado com sucesso!');
       } else {
-        logger.error('Falha ao fazer login. Status: ${response.statusCode}');
-        logger.error('Mensagem de erro: ${response.body}');
+        logger.error('Erro ao fazer login: ${response.body}');
       }
     } catch (e) {
       logger.error('Erro ao fazer requisição.', error: e);

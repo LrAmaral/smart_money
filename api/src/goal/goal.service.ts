@@ -46,7 +46,7 @@ export class GoalService {
         where: { id },
       })
       .then(() => {
-        return { message: 'Goal deleted successfully' };
+        return { message: 'Meta excluída com sucesso' };
       });
   }
 }

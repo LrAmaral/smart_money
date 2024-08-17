@@ -33,12 +33,55 @@ class _RegisterPageState extends State<RegisterPage> {
       try {
         final user = UserRegister(email: email, name: name, password: password);
         await userService.register(user);
-        context.go('/login');
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Sucesso'),
+            content: const Text('Cadastro realizado com sucesso!'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.go('/login');
+                },
+              ),
+            ],
+          ),
+        );
       } catch (e) {
-        logger.error(e);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Erro'),
+            content: Text(e.toString()), // Mostra a mensagem de erro
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
       }
     } else {
-      logger.error('Senhas não correspondem');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erro'),
+          content: const Text('Senhas não correspondem'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
     }
   }
 
