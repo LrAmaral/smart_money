@@ -81,11 +81,11 @@ class TransactionsPageState extends State<TransactionsPage> {
         return Modal(
           textButton: 'Adicionar',
           title: 'Nova Transação',
-          fields: const [
-            {'label': 'Título', 'type': ModalInputType.text},
-            {'label': 'Valor', 'type': ModalInputType.number},
-            {'label': 'Categoria', 'type': ModalInputType.text},
-            {'label': 'Data', 'type': ModalInputType.date},
+          fields: [
+            {'label': 'Título', 'type': ModalInputType.text.type},
+            {'label': 'Valor', 'type': ModalInputType.number.type},
+            {'label': 'Categoria', 'type': ModalInputType.text.type},
+            {'label': 'Data', 'type': ModalInputType.date.type},
           ],
           onConfirm: (data) {
             _addTransaction(data);
@@ -109,22 +109,22 @@ class TransactionsPageState extends State<TransactionsPage> {
             {
               'label': 'Título',
               'value': transaction['title'],
-              'type': ModalInputType.text,
+              'type': ModalInputType.text.type,
             },
             {
               'label': 'Valor',
               'value': transaction['amount'].toString(),
-              'type': ModalInputType.number,
+              'type': ModalInputType.number.type,
             },
             {
               'label': 'Categoria',
               'value': transaction['category'],
-              'type': ModalInputType.text,
+              'type': ModalInputType.text.type,
             },
             {
               'label': 'Data',
               'value': transaction['date'],
-              'type': ModalInputType.date,
+              'type': ModalInputType.date.type,
             },
           ],
           onConfirm: (data) {

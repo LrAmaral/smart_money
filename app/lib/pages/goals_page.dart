@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_money/enums/input_type.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
@@ -72,10 +73,10 @@ class GoalsPageState extends State<GoalsPage> {
         return Modal(
           textButton: "Adicionar",
           title: "Adicionar Meta",
-          fields: const [
-            {'label': 'Nome', 'type': 'text'},
-            {'label': 'Valor Inicial', 'type': 'number'},
-            {'label': 'Valor Final', 'type': 'number'}
+          fields: [
+            {'label': 'Nome', 'type': ModalInputType.text.type},
+            {'label': 'Valor Inicial', 'type': ModalInputType.number.type},
+            {'label': 'Valor Final', 'type': ModalInputType.number.type}
           ],
           onConfirm: (data) {
             print(data);

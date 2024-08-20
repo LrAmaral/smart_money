@@ -10,7 +10,7 @@ class TransactionService {
   final logger = LoggerService();
   final AuthController authController = Get.put(AuthController());
 
-  Future<void> registerTransaction(Map<String, dynamic> goalData) async {
+  Future<void> registerTransaction(Map<String, dynamic> transactionData) async {
     var url = Uri.parse('${ApiConstants.baseUrl}/transaction');
     final token = authController.getAccessToken();
 
@@ -21,7 +21,7 @@ class TransactionService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         },
-        body: json.encode(goalData),
+        body: json.encode(transactionData),
       );
 
       if (response.statusCode == 201) {
