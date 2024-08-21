@@ -17,10 +17,6 @@ export class GoalService {
     });
   }
 
-  findAll() {
-    return this.prisma.goal.findMany();
-  }
-
   findOne(id: string) {
     return this.prisma.goal.findUnique({
       where: { id },

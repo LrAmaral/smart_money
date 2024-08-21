@@ -20,11 +20,6 @@ export class GoalController {
     return this.goalService.create(createGoalDto);
   }
 
-  @Get()
-  findAll() {
-    return this.goalService.findAll();
-  }
-
   @Get(':userId')
   findOne(@Param('userId') userId: string) {
     return this.goalService.findByUser(userId);

@@ -17,10 +17,6 @@ export class TransactionService {
     });
   }
 
-  findAll() {
-    return this.prisma.transaction.findMany();
-  }
-
   findOne(id: string) {
     return this.prisma.transaction.findUnique({
       where: { id },

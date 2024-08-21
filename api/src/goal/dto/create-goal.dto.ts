@@ -8,15 +8,9 @@ export class CreateGoalDto extends Goal {
   @IsString()
   title: string;
 
-  @IsString()
-  type: string;
-
   @IsNumber()
   amount: number;
 
   @IsNumber()
   balance: number;
-
-  @IsString()
-  description: string;
 }
