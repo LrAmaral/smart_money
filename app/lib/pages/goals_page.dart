@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_money/services/goal_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
@@ -11,36 +12,23 @@ class GoalsPage extends StatefulWidget {
 }
 
 class GoalsPageState extends State<GoalsPage> {
-  final List<Map<String, dynamic>> _goals = [
-    {
-      'name': 'Pagar Agiota',
-      'current': 100.0,
-      'goal': 10000.0,
-    },
-    {
-      'name': 'PC Gamer',
-      'current': 600.0,
-      'goal': 5000.0,
-    },
-    {
-      'name': 'Minha Casa, Minha Vida',
-      'current': 1000.0,
-      'goal': 100000.0,
-    },
-    {
-      'name': 'Viagem para Europa',
-      'current': 2000.0,
-      'goal': 12000.0,
-    }
-  ];
-
+  List<Map<String, dynamic>> _goals = [];
   List<Map<String, dynamic>> _filteredGoals = [];
   final TextEditingController _searchController = TextEditingController();
+  final GoalService _goalService = GoalService();
 
   @override
   void initState() {
     super.initState();
-    _filteredGoals = _goals;
+    _loadGoals();
+  }
+
+  Future<void> _loadGoals() async {
+    final goals = await _goalService.getGoals();
+    setState(() {
+      _goals = goals ?? [];
+      _filteredGoals = _goals;
+    });
   }
 
   void _filterGoals(String query) {
@@ -77,8 +65,19 @@ class GoalsPageState extends State<GoalsPage> {
             {'label': 'Valor Inicial', 'type': 'number'},
             {'label': 'Valor Final', 'type': 'number'}
           ],
-          onConfirm: (data) {
-            print(data);
+          onConfirm: (data) async {
+            final newGoal = {
+              'title': data['Nome'],
+              'current': double.parse(data['Valor Inicial']),
+              'goal': double.parse(data['Valor Final']),
+            };
+
+            print(newGoal);
+
+            await _goalService.registerGoal(newGoal);
+            await _loadGoals();
+
+            Navigator.pop(context);
           },
         );
       },
@@ -110,10 +109,23 @@ class GoalsPageState extends State<GoalsPage> {
               'type': 'number',
             },
           ],
-          onConfirm: (data) {
-            print(data);
+          onConfirm: (data) async {
+            final updatedGoal = {
+              'title': data['Nome'],
+              'current': double.parse(data['Valor Inicial']),
+              'goal': double.parse(data['Valor Final']),
+            };
+
+            await _goalService.editGoal(goal['id'], updatedGoal);
+            await _loadGoals();
+
+            Navigator.pop(context);
           },
-          onDelete: () {},
+          onDelete: () async {
+            await _goalService.deleteGoal(goal['id']);
+            await _loadGoals();
+            Navigator.pop(context);
+          },
         );
       },
     );
