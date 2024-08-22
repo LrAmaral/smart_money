@@ -148,7 +148,7 @@ class GoalsPageState extends State<GoalsPage> {
     );
   }
 
-  void _showAddBalanceModal() {
+  void _showAddBalanceModal(Map<String, dynamic> goal) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -159,8 +159,27 @@ class GoalsPageState extends State<GoalsPage> {
           fields: const [
             {'label': 'Valor', 'type': 'number'}
           ],
-          onConfirm: (data) {
-            print('Adicionar saldo: $data');
+          onConfirm: (data) async {
+            final amountToAdd = double.parse(data['Valor']);
+
+            if (amountToAdd <= 0) {
+              print('O valor a ser adicionado deve ser positivo.');
+              return;
+            }
+
+            final updatedGoal = {
+              'title': goal['title'],
+              'balance': goal['balance'] + amountToAdd,
+              'amount': goal['amount'],
+              'user_id': _userId!.toString(),
+            };
+
+            try {
+              await _goalService.editGoal(goal['id'], updatedGoal);
+              await _loadGoals();
+            } catch (e) {
+              print('Erro ao adicionar saldo: $e');
+            }
           },
         );
       },
@@ -292,7 +311,7 @@ class GoalsPageState extends State<GoalsPage> {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          _showAddBalanceModal();
+                                          _showAddBalanceModal(goal);
                                         },
                                         child: Icon(
                                           Icons.add,
