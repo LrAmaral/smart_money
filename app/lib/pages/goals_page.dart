@@ -26,8 +26,7 @@ class GoalsPageState extends State<GoalsPage> {
 
   Future<void> _loadUserData() async {
     final userData = await _goalService.getData();
-    print('Dados do usuário carregados: $userData');
-
+    
     setState(() {
       _userId = userData['sub'];
       print('User ID carregado: $_userId');

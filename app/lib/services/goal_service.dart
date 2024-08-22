@@ -121,8 +121,6 @@ class GoalService {
         body: json.encode(goalData),
       );
 
-      print('Request body: ${json.encode(goalData)}');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.info('Meta editada com sucesso!');
       } else {
