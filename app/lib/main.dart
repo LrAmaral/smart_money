@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: RoutePath.profile.path,
           name: RoutePath.profile.name,
-          builder: (context, state) => const ProfilePage(),
+          builder: (context, state) => ProfilePage(),
         ),
         GoRoute(
           path: RoutePath.editProfile.path,

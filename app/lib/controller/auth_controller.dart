@@ -20,6 +20,22 @@ class AuthController extends GetxController {
     return userProfile.value;
   }
 
+  void setName(String name) {
+    userProfile.update('name', (_) => name, ifAbsent: () => name);
+  }
+
+  String getName() {
+    return userProfile['name'] ?? '';
+  }
+
+  void setEmail(String email) {
+    userProfile.update('email', (_) => email, ifAbsent: () => email);
+  }
+
+  String getEmail() {
+    return userProfile['email'] ?? '';
+  }
+
   void clearAuthData() {
     accessToken.value = '';
     userProfile.clear();

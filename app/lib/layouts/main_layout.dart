@@ -18,7 +18,7 @@ class MainLayoutState extends State<MainLayout> {
     const HomePage(),
     const TransactionsPage(),
     const GoalsPage(),
-    const ProfilePage()
+    ProfilePage()
   ];
 
   void _onItemTapped(int index) {

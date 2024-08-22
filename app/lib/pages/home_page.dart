@@ -19,6 +19,12 @@ class _HomePageState extends State<HomePage> {
     loadDashboardData();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loadDashboardData();
+  }
+
   void loadDashboardData() {
     setState(() {
       _dashboardData = dashboardService.getData();
@@ -43,9 +49,11 @@ class _HomePageState extends State<HomePage> {
               } else {
                 var data = snapshot.data!;
                 var user = data['user'] ?? {'name': 'Usuário'};
-                double balance = data['balance']?.toDouble() ?? 0.0;
-                int transactionsTotal = data['transactionsTotal'] ?? 0;
-                int goalsTotal = data['goalsTotal'] ?? 0;
+                double balance =
+                    data['dashboard']['balance']?.toDouble() ?? 0.0;
+                int transactionsTotal =
+                    data['dashboard']['transactionsTotal'] ?? 0;
+                int goalsTotal = data['dashboard']['goalsTotal'] ?? 0;
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
