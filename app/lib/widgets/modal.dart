@@ -51,25 +51,15 @@ class _ModalState extends State<Modal> {
         field['label']: _controllers[field['label']]?.text ?? '',
     };
 
-    if (formData.values.any((value) => value.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, preencha todos os campos.')),
-      );
-      return;
-    }
-
-    if (formData.containsKey('Valor') &&
-        (double.tryParse(formData['Valor'] ?? '') == null ||
-            double.tryParse(formData['Valor'] ?? '')! <= 0)) {
+    if (formData.values.any((value) => value.isEmpty) ||
+        double.tryParse(formData['Valor'] ?? '') == null ||
+        double.tryParse(formData['Valor'] ?? '')! <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('O valor deve ser um número positivo.'),
-        ),
+            content: Text('Por favor, preencha todos os campos corretamente.')),
       );
       return;
     }
-
-    print('Dados do formulário: $formData');
 
     final Map<String, dynamic> adjustedFormData = formData.map(
       (key, value) => MapEntry(key, value is String ? value : value.toString()),

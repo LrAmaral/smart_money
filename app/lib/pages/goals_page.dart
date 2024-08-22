@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_money/services/goal_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
@@ -12,47 +11,56 @@ class GoalsPage extends StatefulWidget {
 }
 
 class GoalsPageState extends State<GoalsPage> {
-  List<Map<String, dynamic>> _goals = [];
+  final List<Map<String, dynamic>> _goals = [
+    {
+      'name': 'Pagar Agiota',
+      'current': 100.0,
+      'goal': 10000.0,
+    },
+    {
+      'name': 'PC Gamer',
+      'current': 600.0,
+      'goal': 5000.0,
+    },
+    {
+      'name': 'Minha Casa, Minha Vida',
+      'current': 1000.0,
+      'goal': 100000.0,
+    },
+    {
+      'name': 'Viagem para Europa',
+      'current': 2000.0,
+      'goal': 12000.0,
+    }
+  ];
+
   List<Map<String, dynamic>> _filteredGoals = [];
   final TextEditingController _searchController = TextEditingController();
-  final GoalService _goalService = GoalService();
-  String? _userId;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _filteredGoals = _goals;
   }
 
-  Future<void> _loadUserData() async {
-    final userData = await _goalService.getData();
-    print('Dados do usuário carregados: $userData');
-
+  void _filterGoals(String query) {
     setState(() {
-      _userId = userData['sub'];
-      print('User ID carregado: $_userId');
+      _filteredGoals = _goals
+          .where((goal) =>
+              goal['name'].toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
-
-    if (_userId != null) {
-      _loadGoals();
-    } else {
-      print('User ID é nulo. Não foi possível carregar metas.');
-    }
   }
 
-  Future<void> _loadGoals() async {
-    if (_userId == null) return;
+  void _onSearchButtonPressed() {
+    final query = _searchController.text;
+    _filterGoals(query);
+  }
 
-    try {
-      final goals = await _goalService.getGoals();
-      print('Metas carregadas: $goals');
-      setState(() {
-        _goals = goals;
-        _filteredGoals = _goals;
-      });
-    } catch (e) {
-      print('Erro ao carregar metas: $e');
-    }
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _showAddGoalModal() {
@@ -67,28 +75,10 @@ class GoalsPageState extends State<GoalsPage> {
           fields: const [
             {'label': 'Nome', 'type': 'text'},
             {'label': 'Valor Inicial', 'type': 'number'},
-            {'label': 'Valor da Meta', 'type': 'number'}
+            {'label': 'Valor Final', 'type': 'number'}
           ],
-          onConfirm: (data) async {
-            if (_userId != null) {
-              final newGoal = {
-                'title': data['Nome'],
-                'balance': double.parse(data['Valor Inicial']),
-                'amount': double.parse(data['Valor da Meta']),
-                'user_id': _userId!.toString(),
-              };
-
-              print('Nova Meta: $newGoal');
-
-              try {
-                await _goalService.registerGoal(newGoal);
-                await _loadGoals();
-              } catch (e) {
-                print('Erro ao adicionar meta: $e');
-              }
-            } else {
-              print('User ID é nulo. Não foi possível adicionar a meta.');
-            }
+          onConfirm: (data) {
+            print(data);
           },
         );
       },
@@ -106,43 +96,24 @@ class GoalsPageState extends State<GoalsPage> {
           fields: [
             {
               'label': 'Nome',
-              'value': goal['title'],
+              'value': goal['name'],
               'type': 'text',
             },
             {
               'label': 'Valor Inicial',
-              'value': goal['balance'].toString(),
+              'value': goal['current'].toString(),
               'type': 'number',
             },
             {
-              'label': 'Valor da Meta',
-              'value': goal['amount'].toString(),
+              'label': 'Valor Final',
+              'value': goal['goal'].toString(),
               'type': 'number',
             },
           ],
-          onConfirm: (data) async {
-            final updatedGoal = {
-              'title': data['Nome'],
-              'balance': double.parse(data['Valor Inicial']),
-              'amount': double.parse(data['Valor da Meta']),
-              'user_id': _userId!.toString(),
-            };
-
-            try {
-              await _goalService.editGoal(goal['id'], updatedGoal);
-              await _loadGoals();
-            } catch (e) {
-              print('Erro ao atualizar meta: $e');
-            }
+          onConfirm: (data) {
+            print(data);
           },
-          onDelete: () async {
-            try {
-              await _goalService.deleteGoal(goal['id']);
-              await _loadGoals();
-            } catch (e) {
-              print('Erro ao excluir meta: $e');
-            }
-          },
+          onDelete: () {},
         );
       },
     );
@@ -160,21 +131,11 @@ class GoalsPageState extends State<GoalsPage> {
             {'label': 'Valor', 'type': 'number'}
           ],
           onConfirm: (data) {
-            print('Adicionar saldo: $data');
+            print(data);
           },
         );
       },
     );
-  }
-
-  void _onSearchButtonPressed() {
-    final searchTerm = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredGoals = _goals.where((goal) {
-        final title = goal['title'].toLowerCase();
-        return title.contains(searchTerm);
-      }).toList();
-    });
   }
 
   @override
@@ -264,8 +225,7 @@ class GoalsPageState extends State<GoalsPage> {
                       itemCount: _filteredGoals.length,
                       itemBuilder: (context, index) {
                         final goal = _filteredGoals[index];
-                        final progress =
-                            (goal['balance'] / goal['amount']) * 100;
+                        final progress = (goal['current'] / goal['goal']) * 100;
 
                         return GestureDetector(
                           onTap: () {
@@ -284,7 +244,7 @@ class GoalsPageState extends State<GoalsPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Text(
-                                        goal['title'],
+                                        goal['name'],
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
@@ -332,18 +292,8 @@ class GoalsPageState extends State<GoalsPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Saldo: ${goal['balance'].toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: colorScheme.onBackground,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Meta: ${goal['amount'].toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: colorScheme.onBackground,
-                                    ),
+                                    'R\$${goal['current']} - R\$${goal['goal']}',
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ],
                               ),
