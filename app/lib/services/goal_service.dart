@@ -108,7 +108,8 @@ class GoalService {
 
   Future<void> editGoal(String goalId, Map<String, dynamic> goalData) async {
     final String token = authController.getAccessToken();
-    var url = Uri.parse('${ApiConstants.baseUrl}/goals/$goalId');
+
+    var url = Uri.parse('${ApiConstants.baseUrl}/goal/$goalId');
 
     try {
       var response = await http.patch(
@@ -119,6 +120,8 @@ class GoalService {
         },
         body: json.encode(goalData),
       );
+
+      print('Request body: ${json.encode(goalData)}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.info('Meta editada com sucesso!');

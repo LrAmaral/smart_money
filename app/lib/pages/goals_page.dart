@@ -125,13 +125,12 @@ class GoalsPageState extends State<GoalsPage> {
               'title': data['Nome'],
               'balance': double.parse(data['Valor Inicial']),
               'amount': double.parse(data['Valor da Meta']),
-              'userId': goal['userId'],
+              'user_id': _userId!.toString(),
             };
 
             try {
               await _goalService.editGoal(goal['id'], updatedGoal);
               await _loadGoals();
-              Navigator.pop(context);
             } catch (e) {
               print('Erro ao atualizar meta: $e');
             }
