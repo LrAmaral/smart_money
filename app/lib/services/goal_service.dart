@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/constants/env.dart';
@@ -10,6 +11,27 @@ class GoalService {
   final logger = LoggerService();
   final AuthController _authController = Get.put(AuthController());
   AuthController get authController => _authController;
+
+  Future<Map<String, dynamic>> getData() async {
+    final token = authController.getAccessToken();
+
+    if (token == null || token.isEmpty) {
+      print('Token não encontrado ou está vazio');
+      return {};
+    }
+
+    try {
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      String userId = decodedToken['sub'];
+
+      print('User ID decodificado: $userId');
+
+      return {'sub': userId};
+    } catch (e) {
+      print('Erro ao decodificar o token: $e');
+      return {};
+    }
+  }
 
   Future<void> registerGoal(Map<String, dynamic> goalData) async {
     final String token = authController.getAccessToken();
@@ -37,11 +59,22 @@ class GoalService {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getGoals() async {
-    final String token = authController.getAccessToken();
-    var url = Uri.parse('${ApiConstants.baseUrl}/goal');
+  Future<List<Map<String, dynamic>>> getGoals() async {
+    final logger = LoggerService();
+    final AuthController authController = Get.put(AuthController());
+    final token = authController.getAccessToken();
+
+    if (token == null || token.isEmpty) {
+      logger.error('Token não encontrado ou está vazio.');
+      return [];
+    }
 
     try {
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      String userId = decodedToken['sub'];
+
+      var url = Uri.parse('${ApiConstants.baseUrl}/goal/$userId');
+
       var response = await http.get(
         url,
         headers: {
@@ -51,16 +84,25 @@ class GoalService {
       );
 
       if (response.statusCode == 200) {
-        logger.info('Metas carregadas com sucesso!');
-        final goalsData = json.decode(response.body) as List<dynamic>;
-        return goalsData.cast<Map<String, dynamic>>();
+        dynamic data = json.decode(response.body);
+
+        if (data is List) {
+          List<dynamic> goals = data;
+          return goals.map((item) => Map<String, dynamic>.from(item)).toList();
+        } else if (data is Map && data['goals'] is List) {
+          List<dynamic> goals = data['goals'];
+          return goals.map((item) => Map<String, dynamic>.from(item)).toList();
+        } else {
+          logger.error('Formato inesperado da resposta: ${response.body}');
+          return [];
+        }
       } else {
-        logger.error('Erro ao carregar metas: ${response.body}');
-        return null;
+        logger.error('Falha ao consultar dados: ${response.body}');
+        return [];
       }
     } catch (e) {
       logger.error('Erro ao fazer requisição.', error: e);
-      return null;
+      return [];
     }
   }
 
