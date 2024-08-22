@@ -139,7 +139,6 @@ class GoalsPageState extends State<GoalsPage> {
             try {
               await _goalService.deleteGoal(goal['id']);
               await _loadGoals();
-              Navigator.pop(context);
             } catch (e) {
               print('Erro ao excluir meta: $e');
             }
