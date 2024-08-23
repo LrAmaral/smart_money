@@ -20,6 +20,10 @@ class AuthController extends GetxController {
     userId.value = decodedToken['sub'];
   }
 
+  String getUserId() {
+    return userId.value;
+  }
+
   void setUserProfile(Map<String, dynamic> profile) {
     userProfile.value = profile;
   }

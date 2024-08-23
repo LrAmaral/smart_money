@@ -10,9 +10,11 @@ class TransactionService {
   final logger = LoggerService();
   final AuthController authController = Get.put(AuthController());
 
-  Future<void> registerTransaction(Map<String, dynamic> goalData) async {
+  Future<void> registerTransaction(Map<String, dynamic> transactionData) async {
     var url = Uri.parse('${ApiConstants.baseUrl}/transaction');
     final token = authController.getAccessToken();
+
+    logger.warning(transactionData);
 
     try {
       var response = await http.post(
@@ -21,7 +23,7 @@ class TransactionService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         },
-        body: json.encode(goalData),
+        body: json.encode(transactionData),
       );
 
       if (response.statusCode == 201) {
@@ -52,11 +54,15 @@ class TransactionService {
       );
 
       if (response.statusCode == 200) {
-        logger.info('Transações carregadas com sucesso!');
-        final List<dynamic> jsonResponse = json.decode(response.body);
-        return jsonResponse
-            .map((item) => item as Map<String, dynamic>)
-            .toList();
+        dynamic data = json.decode(response.body);
+        logger.warning(data);
+
+        if (data is List) {
+          return data.map((item) => Map<String, dynamic>.from(item)).toList();
+        } else {
+          logger.error('Formato inesperado da resposta: ${response.body}');
+          return [];
+        }
       } else {
         logger.error(
             'Falha ao carregar transações. Status: ${response.statusCode}');
@@ -70,8 +76,8 @@ class TransactionService {
   }
 
   Future<void> deleteTransaction(String transactionId) async {
-    var url = Uri.parse('${ApiConstants.baseUrl}/transaction/$transactionId');
     final token = authController.getAccessToken();
+    var url = Uri.parse('${ApiConstants.baseUrl}/transaction/$transactionId');
 
     try {
       var response = await http.delete(

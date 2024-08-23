@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_money/controller/auth_controller.dart';
+import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
@@ -13,21 +16,26 @@ class TransactionsPage extends StatefulWidget {
 }
 
 class TransactionsPageState extends State<TransactionsPage> {
-  final TransactionService _transactionService = TransactionService();
-  final List<Map<String, dynamic>> _transactions = [];
   List<Map<String, dynamic>> _filteredTransactions = [];
+  List<Map<String, dynamic>> _transactions = [];
+  final logger = LoggerService();
+  final TransactionService _transactionService = TransactionService();
   final TextEditingController _searchController = TextEditingController();
+  final AuthController authController = Get.put(AuthController());
+  String? userId;
 
   @override
   void initState() {
     super.initState();
     _loadTransactions();
+    userId = authController.getUserId();
   }
 
-  void _loadTransactions() async {
+  Future<void> _loadTransactions() async {
     final transactions = await _transactionService.getTransactions();
+
     setState(() {
-      _transactions.addAll(transactions);
+      _transactions = transactions;
       _filteredTransactions = _transactions;
     });
   }
@@ -46,29 +54,36 @@ class TransactionsPageState extends State<TransactionsPage> {
     _filterTransactions(query);
   }
 
-  void _addTransaction(Map<String, dynamic> data) async {
+  Future<void> _addTransaction(Map<String, dynamic> data) async {
     final newTransaction = {
+      'user_id': userId.toString(),
       'title': data['Título'],
       'amount': double.tryParse(data['Valor']) ?? 0.0,
       'category': data['Categoria'],
-      'date': data['Data'],
+      'type': data['Tipo'],
     };
+
+    if (data['Tipo'] == 'saida') {
+      newTransaction['amount'] *= -1;
+    }
+
     await _transactionService.registerTransaction(newTransaction);
     _loadTransactions();
   }
 
-  void _editTransaction(String id, Map<String, dynamic> data) async {
+  Future<void> _editTransaction(String id, Map<String, dynamic> data) async {
     final updatedTransaction = {
+      'user_id': userId.toString(),
       'title': data['Título'],
       'amount': double.tryParse(data['Valor']) ?? 0.0,
       'category': data['Categoria'],
-      'date': data['Data'],
+      'type': data['Tipo'],
     };
     await _transactionService.editTransaction(id, updatedTransaction);
     _loadTransactions();
   }
 
-  void _deleteTransaction(String id) async {
+  Future<void> _deleteTransaction(String id) async {
     await _transactionService.deleteTransaction(id);
     _loadTransactions();
   }
@@ -81,15 +96,14 @@ class TransactionsPageState extends State<TransactionsPage> {
         return Modal(
           textButton: 'Adicionar',
           title: 'Nova Transação',
-          fields: const [
-            {'label': 'Título', 'type': ModalInputType.text},
-            {'label': 'Valor', 'type': ModalInputType.number},
-            {'label': 'Categoria', 'type': ModalInputType.text},
-            {'label': 'Data', 'type': ModalInputType.date},
+          fields: [
+            {'label': 'Título', 'type': ModalInputType.text.type},
+            {'label': 'Valor', 'type': ModalInputType.number.type},
+            {'label': 'Categoria', 'type': ModalInputType.text.type},
           ],
-          onConfirm: (data) {
-            _addTransaction(data);
-            Navigator.of(context).pop();
+          onConfirm: (data) async {
+            await _addTransaction(data);
+            await _loadTransactions();
           },
           showTransactionTypeButtons: true,
         );
@@ -109,31 +123,34 @@ class TransactionsPageState extends State<TransactionsPage> {
             {
               'label': 'Título',
               'value': transaction['title'],
-              'type': ModalInputType.text,
+              'type': ModalInputType.text.type,
             },
             {
               'label': 'Valor',
               'value': transaction['amount'].toString(),
-              'type': ModalInputType.number,
+              'type': ModalInputType.number.type,
             },
             {
               'label': 'Categoria',
               'value': transaction['category'],
-              'type': ModalInputType.text,
-            },
-            {
-              'label': 'Data',
-              'value': transaction['date'],
-              'type': ModalInputType.date,
+              'type': ModalInputType.text.type,
             },
           ],
-          onConfirm: (data) {
-            _editTransaction(transaction['id'], data);
-            Navigator.of(context).pop();
+          onConfirm: (data) async {
+            try {
+              await _editTransaction(transaction['id'], data);
+              await _loadTransactions();
+            } catch (e) {
+              logger.error('Erro ao editar transação: $e');
+            }
           },
-          onDelete: () {
-            _deleteTransaction(transaction['id']);
-            Navigator.of(context).pop();
+          onDelete: () async {
+            try {
+              await _deleteTransaction(transaction['id']);
+              await _loadTransactions();
+            } catch (e) {
+              logger.error('Erro ao excluir transação: $e');
+            }
           },
         );
       },
@@ -285,25 +302,6 @@ class TransactionsPageState extends State<TransactionsPage> {
                                           const SizedBox(width: 4),
                                           Text(
                                             transaction['category'],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: colorScheme.onSurface
-                                                  .withOpacity(0.6),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.calendar_today,
-                                            size: 16,
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.6),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            transaction['date'],
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: colorScheme.onSurface

@@ -12,27 +12,6 @@ class GoalService {
   final AuthController _authController = Get.put(AuthController());
   AuthController get authController => _authController;
 
-  Future<Map<String, dynamic>> getData() async {
-    final token = authController.getAccessToken();
-
-    if (token == null || token.isEmpty) {
-      print('Token não encontrado ou está vazio');
-      return {};
-    }
-
-    try {
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-      String userId = decodedToken['sub'];
-
-      print('User ID decodificado: $userId');
-
-      return {'sub': userId};
-    } catch (e) {
-      print('Erro ao decodificar o token: $e');
-      return {};
-    }
-  }
-
   Future<void> registerGoal(Map<String, dynamic> goalData) async {
     final String token = authController.getAccessToken();
     var url = Uri.parse('${ApiConstants.baseUrl}/goal');
@@ -64,7 +43,7 @@ class GoalService {
     final AuthController authController = Get.put(AuthController());
     final token = authController.getAccessToken();
 
-    if (token == null || token.isEmpty) {
+    if (token.isEmpty) {
       logger.error('Token não encontrado ou está vazio.');
       return [];
     }
@@ -87,17 +66,15 @@ class GoalService {
         dynamic data = json.decode(response.body);
 
         if (data is List) {
-          List<dynamic> goals = data;
-          return goals.map((item) => Map<String, dynamic>.from(item)).toList();
-        } else if (data is Map && data['goals'] is List) {
-          List<dynamic> goals = data['goals'];
-          return goals.map((item) => Map<String, dynamic>.from(item)).toList();
+          return data.map((item) => Map<String, dynamic>.from(item)).toList();
         } else {
           logger.error('Formato inesperado da resposta: ${response.body}');
           return [];
         }
       } else {
-        logger.error('Falha ao consultar dados: ${response.body}');
+        logger
+            .error('Falha ao consultar dados. Status: ${response.statusCode}');
+        logger.error('Mensagem de erro: ${response.body}');
         return [];
       }
     } catch (e) {

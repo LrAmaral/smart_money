@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/modal_input.dart';
 import 'package:smart_money/enums/input_type.dart';
@@ -6,11 +7,11 @@ import 'package:smart_money/widgets/modal_button.dart';
 
 class Modal extends StatefulWidget {
   final String title;
-  final List<Map<String, dynamic>> fields;
   final String textButton;
-  final void Function(Map<String, dynamic> formData) onConfirm;
   final VoidCallback? onDelete;
   final bool showTransactionTypeButtons;
+  final List<Map<String, dynamic>> fields;
+  final void Function(Map<String, dynamic> formData) onConfirm;
 
   const Modal({
     super.key,
@@ -23,10 +24,11 @@ class Modal extends StatefulWidget {
   });
 
   @override
-  _ModalState createState() => _ModalState();
+  ModalState createState() => ModalState();
 }
 
-class _ModalState extends State<Modal> {
+class ModalState extends State<Modal> {
+  final logger = LoggerService();
   String _transactionType = 'entrada';
   final Map<String, TextEditingController> _controllers = {};
 
@@ -41,14 +43,16 @@ class _ModalState extends State<Modal> {
 
   @override
   void dispose() {
-    _controllers.values.forEach((controller) => controller.dispose());
+    for (var controller in _controllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
   void _handleConfirm() {
-    final formData = {
+    final Map<String, dynamic> formData = {
       for (var field in widget.fields)
-        field['label']: _controllers[field['label']]?.text ?? '',
+        field['label'] as String: _controllers[field['label']]?.text ?? '',
     };
 
     if (formData.values.any((value) => value.isEmpty)) {
@@ -69,13 +73,11 @@ class _ModalState extends State<Modal> {
       return;
     }
 
-    print('Dados do formulário: $formData');
+    logger.info('Dados do formulário: $formData');
 
-    final Map<String, dynamic> adjustedFormData = formData.map(
-      (key, value) => MapEntry(key, value is String ? value : value.toString()),
-    );
+    formData['Tipo'] = _transactionType;
 
-    widget.onConfirm(adjustedFormData);
+    widget.onConfirm(formData);
     Navigator.pop(context);
   }
 
