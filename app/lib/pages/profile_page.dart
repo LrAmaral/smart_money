@@ -6,22 +6,11 @@ import 'package:smart_money/services/user_service.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
-
-  @override
-  _ProfilePageState createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  late Future<Map<String, dynamic>?> _userData;
+class ProfilePage extends StatelessWidget {
+  final AuthController authController = Get.find<AuthController>();
   final UserService userService = UserService();
 
-  @override
-  void initState() {
-    super.initState();
-    _userData = userService.getProfile();
-  }
+  ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,68 +21,113 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 52.0),
-          child: FutureBuilder<Map<String, dynamic>?>(
-            future: _userData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Erro: ${snapshot.error}'));
-              } else if (snapshot.hasData && snapshot.data != null) {
-                final userData = snapshot.data!;
-                final TextEditingController nameController =
-                    TextEditingController(text: userData['name']);
-                final TextEditingController emailController =
-                    TextEditingController(text: userData['email']);
+          child: Obx(() {
+            if (authController.userProfile.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const SizedBox(height: 100),
-                    const Image(
-                      width: 200,
-                      image: AssetImage('assets/images/logo.png'),
-                    ),
-                    const SizedBox(height: 80),
-                    CustomInput(
-                      labelText: 'Email',
-                      controller: emailController,
-                      enable: false,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomInput(
-                      labelText: 'Nome',
-                      controller: nameController,
-                      enable: false,
-                    ),
-                    const SizedBox(height: 140),
-                    CustomButton(
-                      text: 'Alterar Dados',
-                      onPressed: () {
-                        context.push('/edit_profile');
-                      },
-                      size: const Size(100, 52),
-                    ),
-                    const SizedBox(height: 24),
-                    CustomButton(
-                      text: "Sair do Aplicativo",
-                      onPressed: () {
-                        final AuthController authController =
-                            Get.find<AuthController>();
+            final userProfile = authController.userProfile;
+            final TextEditingController nameController =
+                TextEditingController(text: userProfile['name']);
+            final TextEditingController emailController =
+                TextEditingController(text: userProfile['email']);
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 100),
+                const Image(
+                  width: 200,
+                  image: AssetImage('assets/images/logo.png'),
+                ),
+                const SizedBox(height: 80),
+                CustomInput(
+                  labelText: 'Email',
+                  controller: emailController,
+                  enable: false,
+                ),
+                const SizedBox(height: 20),
+                CustomInput(
+                  labelText: 'Nome',
+                  controller: nameController,
+                  enable: false,
+                ),
+                const SizedBox(height: 80),
+                CustomButton(
+                  text: 'Alterar Dados',
+                  onPressed: () {
+                    context.push('/edit_profile');
+                  },
+                  size: const Size(100, 52),
+                ),
+                const SizedBox(height: 20),
+                CustomButton(
+                  text: "Sair do Aplicativo",
+                  onPressed: () {
+                    authController.clearAuthData();
+                    context.go('/login');
+                  },
+                  buttonColor: colorScheme.error,
+                  size: const Size(100, 52),
+                ),
+                const SizedBox(height: 20),
+                CustomButton(
+                  text: "Excluir conta",
+                  onPressed: () async {
+                    final bool confirmed = await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirmar Exclusão'),
+                        content: const Text(
+                            'Tem certeza que deseja excluir sua conta?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Cancelar'),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Confirmar'),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (confirmed) {
+                      try {
+                        await userService.deleteProfile();
                         authController.clearAuthData();
                         context.go('/login');
-                      },
-                      buttonColor: colorScheme.error,
-                      size: const Size(100, 52),
-                    ),
-                    const SizedBox(height: 60),
-                  ],
-                );
-              } else {
-                return const Center(child: Text('Nenhum dado encontrado.'));
-              }
-            },
-          ),
+                      } catch (e) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Erro'),
+                            content: const Text('Erro ao excluir perfil.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  buttonColor: colorScheme.error,
+                  size: const Size(100, 52),
+                ),
+                const SizedBox(height: 60),
+              ],
+            );
+          }),
         ),
       ),
     );
