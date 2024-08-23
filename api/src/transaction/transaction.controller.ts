@@ -20,11 +20,6 @@ export class TransactionController {
     return this.transactionService.create(createTransactionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.transactionService.findAll();
-  }
-
   @Get(':userId')
   findOne(@Param('userId') userId: string) {
     return this.transactionService.findByUser(userId);

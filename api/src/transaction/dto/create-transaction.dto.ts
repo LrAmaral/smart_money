@@ -14,9 +14,6 @@ export class CreateTransactionDto extends Transaction {
   @IsString()
   category: string;
 
-  @IsString()
-  description: string;
-
   @IsNumber()
   amount: number;
 }
