@@ -17,7 +17,7 @@ class TransactionsPage extends StatefulWidget {
 
 class TransactionsPageState extends State<TransactionsPage> {
   List<Map<String, dynamic>> _filteredTransactions = [];
-  final List<Map<String, dynamic>> _transactions = [];
+  List<Map<String, dynamic>> _transactions = [];
   final logger = LoggerService();
   final TransactionService _transactionService = TransactionService();
   final TextEditingController _searchController = TextEditingController();
@@ -27,6 +27,7 @@ class TransactionsPageState extends State<TransactionsPage> {
   @override
   void initState() {
     super.initState();
+    _loadTransactions();
     userId = authController.getUserId();
   }
 
@@ -34,7 +35,7 @@ class TransactionsPageState extends State<TransactionsPage> {
     final transactions = await _transactionService.getTransactions();
 
     setState(() {
-      _transactions.addAll(transactions);
+      _transactions = transactions;
       _filteredTransactions = _transactions;
     });
   }
@@ -53,7 +54,7 @@ class TransactionsPageState extends State<TransactionsPage> {
     _filterTransactions(query);
   }
 
-  void _addTransaction(Map<String, dynamic> data) async {
+  Future<void> _addTransaction(Map<String, dynamic> data) async {
     final newTransaction = {
       'user_id': userId.toString(),
       'title': data['Título'],
@@ -70,8 +71,7 @@ class TransactionsPageState extends State<TransactionsPage> {
     _loadTransactions();
   }
 
-  void _editTransaction(String id, Map<String, dynamic> data) async {
-    final userId = await _transactionService.getData();
+  Future<void> _editTransaction(String id, Map<String, dynamic> data) async {
     final updatedTransaction = {
       'user_id': userId.toString(),
       'title': data['Título'],
@@ -83,7 +83,7 @@ class TransactionsPageState extends State<TransactionsPage> {
     _loadTransactions();
   }
 
-  void _deleteTransaction(String id) async {
+  Future<void> _deleteTransaction(String id) async {
     await _transactionService.deleteTransaction(id);
     _loadTransactions();
   }
@@ -101,9 +101,9 @@ class TransactionsPageState extends State<TransactionsPage> {
             {'label': 'Valor', 'type': ModalInputType.number.type},
             {'label': 'Categoria', 'type': ModalInputType.text.type},
           ],
-          onConfirm: (data) {
-            _addTransaction(data);
-            Navigator.of(context).pop();
+          onConfirm: (data) async {
+            await _addTransaction(data);
+            await _loadTransactions();
           },
           showTransactionTypeButtons: true,
         );
@@ -136,13 +136,21 @@ class TransactionsPageState extends State<TransactionsPage> {
               'type': ModalInputType.text.type,
             },
           ],
-          onConfirm: (data) {
-            _editTransaction(transaction['id'], data);
-            Navigator.of(context).pop();
+          onConfirm: (data) async {
+            try {
+              await _editTransaction(transaction['id'], data);
+              await _loadTransactions();
+            } catch (e) {
+              logger.error('Erro ao editar transação: $e');
+            }
           },
-          onDelete: () {
-            _deleteTransaction(transaction['id']);
-            Navigator.of(context).pop();
+          onDelete: () async {
+            try {
+              await _deleteTransaction(transaction['id']);
+              await _loadTransactions();
+            } catch (e) {
+              logger.error('Erro ao excluir transação: $e');
+            }
           },
         );
       },

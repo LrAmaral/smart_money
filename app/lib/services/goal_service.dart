@@ -66,17 +66,15 @@ class GoalService {
         dynamic data = json.decode(response.body);
 
         if (data is List) {
-          List<dynamic> goals = data;
-          return goals.map((item) => Map<String, dynamic>.from(item)).toList();
-        } else if (data is Map && data['goals'] is List) {
-          List<dynamic> goals = data['goals'];
-          return goals.map((item) => Map<String, dynamic>.from(item)).toList();
+          return data.map((item) => Map<String, dynamic>.from(item)).toList();
         } else {
           logger.error('Formato inesperado da resposta: ${response.body}');
           return [];
         }
       } else {
-        logger.error('Falha ao consultar dados: ${response.body}');
+        logger
+            .error('Falha ao consultar dados. Status: ${response.statusCode}');
+        logger.error('Mensagem de erro: ${response.body}');
         return [];
       }
     } catch (e) {

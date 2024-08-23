@@ -26,12 +26,11 @@ class GoalsPageState extends State<GoalsPage> {
   @override
   void initState() {
     super.initState();
+    _loadGoals();
     userId = authController.getUserId();
   }
 
   Future<void> _loadGoals() async {
-    if (userId == null) return;
-
     try {
       final goals = await _goalService.getGoals();
       logger.info('Metas carregadas: $goals');
