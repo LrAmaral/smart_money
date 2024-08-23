@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:smart_money/services/goal_service.dart';
-import 'package:smart_money/widgets/custom_button.dart';
-import 'package:smart_money/widgets/custom_input.dart';
+import 'package:get/get.dart';
+import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/widgets/modal.dart';
+import 'package:smart_money/widgets/custom_input.dart';
+import 'package:smart_money/widgets/custom_button.dart';
+import 'package:smart_money/services/goal_service.dart';
+import 'package:smart_money/services/logger_service.dart';
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({super.key});
@@ -14,43 +17,30 @@ class GoalsPage extends StatefulWidget {
 class GoalsPageState extends State<GoalsPage> {
   List<Map<String, dynamic>> _goals = [];
   List<Map<String, dynamic>> _filteredGoals = [];
-  final TextEditingController _searchController = TextEditingController();
+  final logger = LoggerService();
   final GoalService _goalService = GoalService();
-  String? _userId;
+  final TextEditingController _searchController = TextEditingController();
+  final AuthController authController = Get.put(AuthController());
+  String? userId;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
-  }
-
-  Future<void> _loadUserData() async {
-    final userData = await _goalService.getData();
-
-    setState(() {
-      _userId = userData['sub'];
-      print('User ID carregado: $_userId');
-    });
-
-    if (_userId != null) {
-      _loadGoals();
-    } else {
-      print('User ID é nulo. Não foi possível carregar metas.');
-    }
+    userId = authController.getUserId();
   }
 
   Future<void> _loadGoals() async {
-    if (_userId == null) return;
+    if (userId == null) return;
 
     try {
       final goals = await _goalService.getGoals();
-      print('Metas carregadas: $goals');
+      logger.info('Metas carregadas: $goals');
       setState(() {
         _goals = goals;
         _filteredGoals = _goals;
       });
     } catch (e) {
-      print('Erro ao carregar metas: $e');
+      logger.error('Erro ao carregar metas: $e');
     }
   }
 
@@ -69,24 +59,25 @@ class GoalsPageState extends State<GoalsPage> {
             {'label': 'Valor da Meta', 'type': 'number'}
           ],
           onConfirm: (data) async {
-            if (_userId != null) {
+            if (userId != null) {
               final newGoal = {
                 'title': data['Nome'],
                 'balance': double.parse(data['Valor Inicial']),
                 'amount': double.parse(data['Valor da Meta']),
-                'user_id': _userId!.toString(),
+                'user_id': userId!.toString(),
               };
 
-              print('Nova Meta: $newGoal');
+              logger.info('Nova Meta: $newGoal');
 
               try {
                 await _goalService.registerGoal(newGoal);
                 await _loadGoals();
               } catch (e) {
-                print('Erro ao adicionar meta: $e');
+                logger.error('Erro ao adicionar meta: $e');
               }
             } else {
-              print('User ID é nulo. Não foi possível adicionar a meta.');
+              logger
+                  .error('User ID é nulo. Não foi possível adicionar a meta.');
             }
           },
         );
@@ -124,14 +115,14 @@ class GoalsPageState extends State<GoalsPage> {
               'title': data['Nome'],
               'balance': double.parse(data['Valor Inicial']),
               'amount': double.parse(data['Valor da Meta']),
-              'user_id': _userId!.toString(),
+              'user_id': userId!.toString(),
             };
 
             try {
               await _goalService.editGoal(goal['id'], updatedGoal);
               await _loadGoals();
             } catch (e) {
-              print('Erro ao atualizar meta: $e');
+              logger.error('Erro ao atualizar meta: $e');
             }
           },
           onDelete: () async {
@@ -139,7 +130,7 @@ class GoalsPageState extends State<GoalsPage> {
               await _goalService.deleteGoal(goal['id']);
               await _loadGoals();
             } catch (e) {
-              print('Erro ao excluir meta: $e');
+              logger.error('Erro ao excluir meta: $e');
             }
           },
         );
@@ -162,7 +153,7 @@ class GoalsPageState extends State<GoalsPage> {
             final amountToAdd = double.parse(data['Valor']);
 
             if (amountToAdd <= 0) {
-              print('O valor a ser adicionado deve ser positivo.');
+              logger.warning('O valor a ser adicionado deve ser positivo.');
               return;
             }
 
@@ -170,14 +161,14 @@ class GoalsPageState extends State<GoalsPage> {
               'title': goal['title'],
               'balance': goal['balance'] + amountToAdd,
               'amount': goal['amount'],
-              'user_id': _userId!.toString(),
+              'user_id': userId!.toString(),
             };
 
             try {
               await _goalService.editGoal(goal['id'], updatedGoal);
               await _loadGoals();
             } catch (e) {
-              print('Erro ao adicionar saldo: $e');
+              logger.error('Erro ao adicionar saldo: $e');
             }
           },
         );

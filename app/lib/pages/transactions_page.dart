@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_money/controller/auth_controller.dart';
+import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
@@ -13,19 +16,23 @@ class TransactionsPage extends StatefulWidget {
 }
 
 class TransactionsPageState extends State<TransactionsPage> {
-  final TransactionService _transactionService = TransactionService();
-  final List<Map<String, dynamic>> _transactions = [];
   List<Map<String, dynamic>> _filteredTransactions = [];
+  final List<Map<String, dynamic>> _transactions = [];
+  final logger = LoggerService();
+  final TransactionService _transactionService = TransactionService();
   final TextEditingController _searchController = TextEditingController();
+  final AuthController authController = Get.put(AuthController());
+  String? userId;
 
   @override
   void initState() {
     super.initState();
-    _loadTransactions();
+    userId = authController.getUserId();
   }
 
-  void _loadTransactions() async {
+  Future<void> _loadTransactions() async {
     final transactions = await _transactionService.getTransactions();
+
     setState(() {
       _transactions.addAll(transactions);
       _filteredTransactions = _transactions;
@@ -48,21 +55,29 @@ class TransactionsPageState extends State<TransactionsPage> {
 
   void _addTransaction(Map<String, dynamic> data) async {
     final newTransaction = {
+      'user_id': userId.toString(),
       'title': data['Título'],
       'amount': double.tryParse(data['Valor']) ?? 0.0,
       'category': data['Categoria'],
-      'date': data['Data'],
+      'type': data['Tipo'],
     };
+
+    if (data['Tipo'] == 'saida') {
+      newTransaction['amount'] *= -1;
+    }
+
     await _transactionService.registerTransaction(newTransaction);
     _loadTransactions();
   }
 
   void _editTransaction(String id, Map<String, dynamic> data) async {
+    final userId = await _transactionService.getData();
     final updatedTransaction = {
+      'user_id': userId.toString(),
       'title': data['Título'],
       'amount': double.tryParse(data['Valor']) ?? 0.0,
       'category': data['Categoria'],
-      'date': data['Data'],
+      'type': data['Tipo'],
     };
     await _transactionService.editTransaction(id, updatedTransaction);
     _loadTransactions();
@@ -85,7 +100,6 @@ class TransactionsPageState extends State<TransactionsPage> {
             {'label': 'Título', 'type': ModalInputType.text.type},
             {'label': 'Valor', 'type': ModalInputType.number.type},
             {'label': 'Categoria', 'type': ModalInputType.text.type},
-            {'label': 'Data', 'type': ModalInputType.date.type},
           ],
           onConfirm: (data) {
             _addTransaction(data);
@@ -120,11 +134,6 @@ class TransactionsPageState extends State<TransactionsPage> {
               'label': 'Categoria',
               'value': transaction['category'],
               'type': ModalInputType.text.type,
-            },
-            {
-              'label': 'Data',
-              'value': transaction['date'],
-              'type': ModalInputType.date.type,
             },
           ],
           onConfirm: (data) {
@@ -285,25 +294,6 @@ class TransactionsPageState extends State<TransactionsPage> {
                                           const SizedBox(width: 4),
                                           Text(
                                             transaction['category'],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: colorScheme.onSurface
-                                                  .withOpacity(0.6),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.calendar_today,
-                                            size: 16,
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.6),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            transaction['date'],
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: colorScheme.onSurface

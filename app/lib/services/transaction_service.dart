@@ -10,9 +10,29 @@ class TransactionService {
   final logger = LoggerService();
   final AuthController authController = Get.put(AuthController());
 
+  Future<String> getData() async {
+    final token = authController.getAccessToken();
+
+    if (token.isEmpty) {
+      logger.info('Token não encontrado ou está vazio');
+      return '';
+    }
+
+    try {
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      String userId = decodedToken['sub'];
+      return userId;
+    } catch (e) {
+      logger.error('Erro ao decodificar o token: $e');
+      return '';
+    }
+  }
+
   Future<void> registerTransaction(Map<String, dynamic> transactionData) async {
     var url = Uri.parse('${ApiConstants.baseUrl}/transaction');
     final token = authController.getAccessToken();
+
+    logger.warning(transactionData);
 
     try {
       var response = await http.post(
