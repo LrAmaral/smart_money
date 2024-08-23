@@ -4,13 +4,13 @@ import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 
 class EditPasswordPage extends StatefulWidget {
-  const EditPasswordPage({Key? key}) : super(key: key);
+  const EditPasswordPage({super.key});
 
   @override
-  _EditPasswordPageState createState() => _EditPasswordPageState();
+  EditPasswordPageState createState() => EditPasswordPageState();
 }
 
-class _EditPasswordPageState extends State<EditPasswordPage> {
+class EditPasswordPageState extends State<EditPasswordPage> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController emailController = TextEditingController();

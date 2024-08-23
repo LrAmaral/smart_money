@@ -1,114 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:smart_money/services/dashboard_service.dart';
+import 'package:get/get.dart';
+import 'package:smart_money/controller/dashboard_controller.dart';
 import '../widgets/info_card.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  late Future<Map<String, dynamic>> _dashboardData;
-  final DashboardService dashboardService = DashboardService();
-
-  @override
-  void initState() {
-    super.initState();
-    loadDashboardData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    loadDashboardData();
-  }
-
-  void loadDashboardData() {
-    setState(() {
-      _dashboardData = dashboardService.getData();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final DashboardController dashboardController =
+        Get.put(DashboardController());
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: FutureBuilder<Map<String, dynamic>>(
-            future: _dashboardData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return const Center(child: Text('Error loading data'));
-              } else if (!snapshot.hasData) {
-                return const Center(child: Text('No data available'));
-              } else {
-                var data = snapshot.data!;
-                var user = data['user'] ?? {'name': 'Usuário'};
-                double balance =
-                    data['dashboard']['balance']?.toDouble() ?? 0.0;
-                int transactionsTotal =
-                    data['dashboard']['transactionsTotal'] ?? 0;
-                int goalsTotal = data['dashboard']['goalsTotal'] ?? 0;
+          child: Obx(() {
+            if (dashboardController.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (dashboardController.hasError.value) {
+              return const Center(child: Text('Error loading data'));
+            } else if (dashboardController.dashboardData.isEmpty) {
+              return const Center(child: Text('No data available'));
+            } else {
+              var data = dashboardController.dashboardData;
+              var user = data['user'] ?? {'name': 'Usuário'};
+              double balance = data['dashboard']['balance']?.toDouble() ?? 0.0;
+              int transactionsTotal =
+                  data['dashboard']['transactionsTotal'] ?? 0;
+              int goalsTotal = data['dashboard']['goalsTotal'] ?? 0;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const SizedBox(height: 40),
-                    Center(
-                      child: Column(
-                        children: [
-                          const Image(
-                            width: 200,
-                            image: AssetImage('assets/images/logo.png'),
-                          ),
-                          const SizedBox(height: 52),
-                          Text(
-                            'Seja bem vindo, ${user['name']}!',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 52),
-                    InfoCard(
-                      title: 'Saldo Geral',
-                      subtitle: 'Últimos 30 dias',
-                      value: 'R\$ ${balance.toStringAsFixed(2)}',
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(height: 40),
+                  Center(
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: InfoCard(
-                            title: 'Transações',
-                            subtitle: 'Últimos 30 dias',
-                            value: transactionsTotal.toString(),
-                          ),
+                        const Image(
+                          width: 200,
+                          image: AssetImage('assets/images/logo.png'),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: InfoCard(
-                            title: 'Metas',
-                            subtitle: 'Total',
-                            value: goalsTotal.toString(),
+                        const SizedBox(height: 52),
+                        Text(
+                          'Seja bem vindo, ${user['name']}!',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                );
-              }
-            },
-          ),
+                  ),
+                  const SizedBox(height: 52),
+                  InfoCard(
+                    title: 'Saldo Geral',
+                    subtitle: 'Últimos 30 dias',
+                    value: 'R\$ ${balance.toStringAsFixed(2)}',
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: InfoCard(
+                          title: 'Transações',
+                          subtitle: 'Últimos 30 dias',
+                          value: transactionsTotal.toString(),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: InfoCard(
+                          title: 'Metas',
+                          subtitle: 'Total',
+                          value: goalsTotal.toString(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }
+          }),
         ),
       ),
     );

@@ -83,9 +83,33 @@ class UserService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.info('Edição feita com sucesso!');
       } else {
-        logger
-            .error('Falha ao realizar edição. Status: ${response.statusCode}');
-        logger.error('Mensagem de erro: ${response.body}');
+        logger.error('Falha ao realizar edição: ${response.body}');
+      }
+    } catch (e) {
+      logger.error('Erro ao fazer requisição.', error: e);
+    }
+  }
+
+  Future<void> deleteProfile() async {
+    var token = authController.getAccessToken();
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    String userId = decodedToken['sub'];
+
+    var url = Uri.parse('${ApiConstants.baseUrl}/user/$userId');
+
+    try {
+      var response = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.info('Remoção feita com sucesso!');
+      } else {
+        logger.error('Falha ao realizar remoção: ${response.body}');
       }
     } catch (e) {
       logger.error('Erro ao fazer requisição.', error: e);
