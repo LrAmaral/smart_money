@@ -1,28 +1,42 @@
 import 'package:flutter/material.dart';
 
-class CustomInput extends StatelessWidget {
+class CustomInput extends StatefulWidget {
   final String labelText;
   final TextEditingController controller;
   final bool obscureText;
   final bool enable;
 
-  const CustomInput(
-      {super.key,
-      required this.labelText,
-      required this.controller,
-      this.obscureText = false,
-      this.enable = true});
+  const CustomInput({
+    super.key,
+    required this.labelText,
+    required this.controller,
+    this.obscureText = false,
+    this.enable = true,
+  });
+
+  @override
+  _CustomInputState createState() => _CustomInputState();
+}
+
+class _CustomInputState extends State<CustomInput> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      enabled: enable,
+      controller: widget.controller,
+      obscureText: _obscureText,
+      enabled: widget.enable,
       decoration: InputDecoration(
-        labelText: labelText,
+        labelText: widget.labelText,
         labelStyle: TextStyle(color: colorScheme.surfaceTint),
         filled: true,
         isDense: true,
@@ -39,6 +53,24 @@ class CustomInput extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: colorScheme.surfaceTint),
         ),
+        suffixIcon: widget.obscureText
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+                icon: _obscureText
+                    ? Icon(
+                        Icons.visibility_off,
+                        color: colorScheme.surfaceTint,
+                      )
+                    : Icon(
+                        Icons.visibility,
+                        color: colorScheme.surfaceTint,
+                      ),
+              )
+            : null,
       ),
       style: TextStyle(color: colorScheme.surfaceTint),
     );

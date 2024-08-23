@@ -14,25 +14,31 @@ class MainLayout extends StatefulWidget {
 
 class MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [
-    const HomePage(),
-    const TransactionsPage(),
-    const GoalsPage(),
-    const ProfilePage()
-  ];
+  final PageController _pageController = PageController();
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: <Widget>[
+          const HomePage(),
+          const TransactionsPage(),
+          const GoalsPage(),
+          ProfilePage(),
+        ],
       ),
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,

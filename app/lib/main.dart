@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final AuthController authController = Get.put(AuthController());
 
-    final GoRouter _router = GoRouter(
+    final GoRouter router = GoRouter(
       initialLocation:
           authController.getAccessToken().isNotEmpty ? '/home' : '/login',
       routes: [
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: RoutePath.profile.path,
           name: RoutePath.profile.name,
-          builder: (context, state) => const ProfilePage(),
+          builder: (context, state) => ProfilePage(),
         ),
         GoRoute(
           path: RoutePath.editProfile.path,
@@ -98,7 +98,7 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp.router(
-      routerConfig: _router,
+      routerConfig: router,
       title: 'Smart Money',
       theme: ThemeData(
         fontFamily: 'DM Sans',

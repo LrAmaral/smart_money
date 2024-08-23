@@ -30,9 +30,16 @@ class DashboardService {
         Map<String, dynamic> data =
             Map<String, dynamic>.from(json.decode(response.body));
 
+        final user = data['user'];
+        if (user != null) {
+          authController.setName(user['name']);
+          authController.setEmail(user['email']);
+        }
+
+        logger.info('Dashboard carregado com sucesso!');
         return data;
       } else {
-        logger.error('Falha ao consultado dados: ${response.body}');
+        logger.error('Falha ao consultar dados: ${response.body}');
         return {};
       }
     } catch (e) {
