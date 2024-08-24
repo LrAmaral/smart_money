@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
-import 'package:smart_money/utils/number_format.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
@@ -278,8 +277,7 @@ class TransactionsPageState extends State<TransactionsPage> {
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        currencyFormatter
-                                            .format(transaction['amount']),
+                                        'R\$ ${transaction['amount'].toStringAsFixed(2)}',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,

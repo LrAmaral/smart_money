@@ -14,6 +14,8 @@ class TransactionService {
     var url = Uri.parse('${ApiConstants.baseUrl}/transaction');
     final token = authController.getAccessToken();
 
+    logger.warning(transactionData);
+
     try {
       var response = await http.post(
         url,
@@ -53,6 +55,7 @@ class TransactionService {
 
       if (response.statusCode == 200) {
         dynamic data = json.decode(response.body);
+        logger.warning(data);
 
         if (data is List) {
           return data.map((item) => Map<String, dynamic>.from(item)).toList();

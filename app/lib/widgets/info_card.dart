@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_money/model/icon_info.dart';
 
 class InfoCard extends StatelessWidget {
   final String title;
@@ -7,45 +6,46 @@ class InfoCard extends StatelessWidget {
   final String value;
 
   const InfoCard({
-    super.key,
+    Key? key,
     required this.title,
     required this.subtitle,
     required this.value,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    IconInfo getIconInfo() {
-      if (value.isNotEmpty) {
-        String trimmedValue = value.trim();
-
-        if (trimmedValue.startsWith('-')) {
-          return IconInfo(
-            icon: Icons.arrow_circle_down,
-            color: colorScheme.error,
-          );
-        } else if (trimmedValue.endsWith(" 0,00")) {
-          return IconInfo(
-            icon: Icons.horizontal_rule,
-            color: colorScheme.onSurface,
-          );
-        } else {
-          return IconInfo(
-            icon: Icons.arrow_circle_up,
-            color: colorScheme.primary,
-          );
-        }
-      }
-
-      return IconInfo(
-        icon: Icons.horizontal_rule,
-        color: colorScheme.onSurface,
-      );
+    double? valueParsed;
+    if (title == 'Saldo Geral') {
+      valueParsed =
+          double.tryParse(value.replaceAll('R\$', '').replaceAll(',', '')) ??
+              0.0;
     }
 
-    IconInfo iconInfo = getIconInfo();
+    IconData getIconData() {
+      if (valueParsed != null) {
+        if (valueParsed > 0) {
+          return Icons.arrow_circle_up;
+        } else if (valueParsed < 0) {
+          return Icons.arrow_circle_down;
+        } else {
+          return Icons.horizontal_rule;
+        }
+      }
+      return Icons.horizontal_rule;
+    }
+
+    Color getIconColor() {
+      if (valueParsed != null) {
+        if (valueParsed > 0) {
+          return colorScheme.primary;
+        } else if (valueParsed < 0) {
+          return colorScheme.error;
+        }
+      }
+      return colorScheme.onSurface;
+    }
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -65,8 +65,8 @@ class InfoCard extends StatelessWidget {
               ),
               if (title == 'Saldo Geral')
                 Icon(
-                  iconInfo.icon,
-                  color: iconInfo.color,
+                  getIconData(),
+                  color: getIconColor(),
                   size: 28,
                 ),
             ],
@@ -76,7 +76,7 @@ class InfoCard extends StatelessWidget {
             value,
             style: TextStyle(
               color: title == 'Saldo Geral'
-                  ? iconInfo.color
+                  ? getIconColor()
                   : colorScheme.onSurface,
               fontSize: 28,
               fontWeight: FontWeight.bold,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smart_money/services/dashboard_service.dart';
-import 'package:smart_money/utils/number_format.dart';
 import '../widgets/info_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -89,7 +88,7 @@ class HomePageState extends State<HomePage> {
               InfoCard(
                 title: 'Saldo Geral',
                 subtitle: 'Últimos 30 dias',
-                value: currencyFormatter.format(balance),
+                value: 'R\$ ${balance.toStringAsFixed(2)}',
               ),
               const SizedBox(height: 20),
               Row(

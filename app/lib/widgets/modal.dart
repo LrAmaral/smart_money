@@ -56,14 +56,20 @@ class ModalState extends State<Modal> {
     };
 
     if (formData.values.any((value) => value.isEmpty)) {
-      _showErrorDialog('Por favor, preencha todos os campos.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, preencha todos os campos.')),
+      );
       return;
     }
 
     if (formData.containsKey('Valor') &&
         (double.tryParse(formData['Valor'] ?? '') == null ||
             double.tryParse(formData['Valor'] ?? '')! <= 0)) {
-      _showErrorDialog('O valor deve ser um número positivo.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('O valor deve ser um número positivo.'),
+        ),
+      );
       return;
     }
 
@@ -73,26 +79,6 @@ class ModalState extends State<Modal> {
 
     widget.onConfirm(formData);
     Navigator.pop(context);
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Erro"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
