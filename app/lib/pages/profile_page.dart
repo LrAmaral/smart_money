@@ -67,7 +67,7 @@ class ProfilePage extends StatelessWidget {
                     authController.clearAuthData();
                     context.go('/login');
                   },
-                  buttonColor: colorScheme.error,
+                  buttonColor: colorScheme.onErrorContainer,
                   size: const Size(100, 52),
                 ),
                 const SizedBox(height: 20),
