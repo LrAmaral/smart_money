@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:smart_money/api/register_user.dart';
 import 'package:smart_money/api/login_user.dart';
 import 'package:smart_money/controller/auth_controller.dart';
@@ -22,7 +21,7 @@ class UserService {
       var response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
         },
         body: json.encode(userJson),
       );
@@ -50,7 +49,7 @@ class UserService {
       var response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
         },
         body: json.encode(userJson),
       );
@@ -68,15 +67,16 @@ class UserService {
     }
   }
 
-  Future<void> editProfile(Map<String, dynamic> user, String userId) async {
+  Future<void> editProfile(Map<String, dynamic> user) async {
     var token = authController.getAccessToken();
+    var userId = authController.getUserId();
     var url = Uri.parse('${ApiConstants.baseUrl}/user/$userId');
 
     try {
       var response = await http.patch(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token',
         },
         body: json.encode(user),
@@ -94,8 +94,7 @@ class UserService {
 
   Future<void> deleteProfile() async {
     var token = authController.getAccessToken();
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    String userId = decodedToken['sub'];
+    var userId = authController.getUserId();
 
     var url = Uri.parse('${ApiConstants.baseUrl}/user/$userId');
 
@@ -103,7 +102,7 @@ class UserService {
       var response = await http.delete(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token',
         },
       );
@@ -120,9 +119,7 @@ class UserService {
 
   Future<Map<String, dynamic>?> getProfile() async {
     final token = authController.getAccessToken();
-
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    String userId = decodedToken['sub'];
+    final userId = authController.getUserId();
 
     var url = Uri.parse('${ApiConstants.baseUrl}/user/$userId');
 
@@ -130,7 +127,7 @@ class UserService {
       var response = await http.get(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token',
         },
       );

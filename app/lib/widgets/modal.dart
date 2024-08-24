@@ -12,6 +12,7 @@ class Modal extends StatefulWidget {
   final bool showTransactionTypeButtons;
   final List<Map<String, dynamic>> fields;
   final void Function(Map<String, dynamic> formData) onConfirm;
+  final String errorMessage;
 
   const Modal({
     super.key,
@@ -21,6 +22,7 @@ class Modal extends StatefulWidget {
     required this.onConfirm,
     this.onDelete,
     this.showTransactionTypeButtons = false,
+    this.errorMessage = "",
   });
 
   @override
@@ -54,24 +56,6 @@ class ModalState extends State<Modal> {
       for (var field in widget.fields)
         field['label'] as String: _controllers[field['label']]?.text ?? '',
     };
-
-    if (formData.values.any((value) => value.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, preencha todos os campos.')),
-      );
-      return;
-    }
-
-    if (formData.containsKey('Valor') &&
-        (double.tryParse(formData['Valor'] ?? '') == null ||
-            double.tryParse(formData['Valor'] ?? '')! <= 0)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('O valor deve ser um número positivo.'),
-        ),
-      );
-      return;
-    }
 
     formData['Tipo'] = _transactionType;
 
@@ -188,7 +172,16 @@ class ModalState extends State<Modal> {
                     ],
                   ),
                 ],
-                const SizedBox(height: 48),
+                const SizedBox(height: 12),
+                Text(
+                  widget.errorMessage,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.error,
+                  ),
+                ),
+                const SizedBox(height: 24),
                 CustomButton(
                   text: widget.textButton,
                   onPressed: _handleConfirm,

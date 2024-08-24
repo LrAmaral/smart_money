@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/model/edit_user.dart';
 import 'package:smart_money/services/logger_service.dart';
@@ -31,10 +30,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-
-    final token = authController.getAccessToken();
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    id = decodedToken['sub'];
+    id = authController.getUserId();
 
     final userProfile = authController.userProfile;
     nameController = TextEditingController(text: userProfile['name']);
@@ -57,7 +53,6 @@ class EditProfilePageState extends State<EditProfilePage> {
     final email = emailController.text;
     final password = newPasswordController.text;
     final confirmPassword = confirmPasswordController.text;
-    final userId = id;
 
     if (password.isEmpty || password == confirmPassword) {
       try {
@@ -70,9 +65,9 @@ class EditProfilePageState extends State<EditProfilePage> {
         final userMap = user.toEditJson();
 
         if (userMap.isNotEmpty) {
-          await userService.editProfile(userMap, userId);
+          await userService.editProfile(userMap);
           authController.setUserProfile(userMap);
-          context.pop(); // Use context.pop() to go back
+          context.pop();
         } else {
           logger.error('Nenhuma informação foi alterada.');
         }
@@ -132,7 +127,7 @@ class EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 24),
               CustomButton(
                 text: 'Cancelar',
-                onPressed: () => context.pop(), // Use context.pop() to go back
+                onPressed: () => context.pop(),
                 buttonColor: Theme.of(context).colorScheme.error,
                 size: const Size(100, 52),
               ),
