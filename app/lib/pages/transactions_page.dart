@@ -80,10 +80,6 @@ class TransactionsPageState extends State<TransactionsPage> {
       return;
     }
 
-    if (data['Tipo'] == 'saida') {
-      amount *= -1;
-    }
-
     if (data['Categoria'].toString().trim().isEmpty) {
       formController.setErrorMessage('A categoria não pode ser vazio.');
       return;
@@ -135,7 +131,7 @@ class TransactionsPageState extends State<TransactionsPage> {
     final updatedTransaction = {
       'user_id': userId.toString(),
       'title': data['Título'],
-      'amount': data['Tipo'] == 'saida' ? amount * -1 : amount,
+      'amount': amount,
       'category': data['Categoria'],
       'type': data['Tipo'],
     };
@@ -215,6 +211,7 @@ class TransactionsPageState extends State<TransactionsPage> {
             await _deleteTransaction(transaction['id']);
           },
           showTransactionTypeButtons: true,
+          transactionTypeButtons: transaction['type'],
         );
       },
     );
@@ -313,8 +310,7 @@ class TransactionsPageState extends State<TransactionsPage> {
                       itemCount: _filteredTransactions.length,
                       itemBuilder: (context, index) {
                         final transaction = _filteredTransactions[index];
-                        final isNegative = transaction['amount'] < 0;
-                        final amountColor = isNegative
+                        final amountColor = transaction['type'] == 'saida'
                             ? colorScheme.error
                             : colorScheme.primary;
 

@@ -12,6 +12,7 @@ class Modal extends StatefulWidget {
   final String textButton;
   final VoidCallback? onDelete;
   final bool showTransactionTypeButtons;
+  final String transactionTypeButtons;
   final List<Map<String, dynamic>> fields;
   final void Function(Map<String, dynamic> formData) onConfirm;
 
@@ -23,6 +24,7 @@ class Modal extends StatefulWidget {
     required this.onConfirm,
     this.onDelete,
     this.showTransactionTypeButtons = false,
+    this.transactionTypeButtons = "entrada",
   });
 
   @override
@@ -43,6 +45,9 @@ class ModalState extends State<Modal> {
     _controllers.addAll({
       for (var field in widget.fields)
         field['label']: TextEditingController(text: field['value'] ?? ''),
+    });
+    setState(() {
+      _transactionType = widget.transactionTypeButtons;
     });
   }
 
