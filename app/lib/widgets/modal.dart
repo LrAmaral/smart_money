@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_money/controller/form_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/modal_input.dart';
@@ -12,7 +14,6 @@ class Modal extends StatefulWidget {
   final bool showTransactionTypeButtons;
   final List<Map<String, dynamic>> fields;
   final void Function(Map<String, dynamic> formData) onConfirm;
-  final String errorMessage;
 
   const Modal({
     super.key,
@@ -22,7 +23,6 @@ class Modal extends StatefulWidget {
     required this.onConfirm,
     this.onDelete,
     this.showTransactionTypeButtons = false,
-    this.errorMessage = "",
   });
 
   @override
@@ -31,12 +31,15 @@ class Modal extends StatefulWidget {
 
 class ModalState extends State<Modal> {
   final logger = LoggerService();
+  final FormController formController = Get.put(FormController());
+
   String _transactionType = 'entrada';
   final Map<String, TextEditingController> _controllers = {};
 
   @override
   void initState() {
     super.initState();
+    formController.clearErrorMessage();
     _controllers.addAll({
       for (var field in widget.fields)
         field['label']: TextEditingController(text: field['value'] ?? ''),
@@ -60,7 +63,11 @@ class ModalState extends State<Modal> {
     formData['Tipo'] = _transactionType;
 
     widget.onConfirm(formData);
-    Navigator.pop(context);
+
+    if (formController.getErrorMessage().isEmpty) {
+      Navigator.pop(context);
+      formController.clearErrorMessage();
+    }
   }
 
   @override
@@ -174,7 +181,7 @@ class ModalState extends State<Modal> {
                 ],
                 const SizedBox(height: 12),
                 Text(
-                  widget.errorMessage,
+                  formController.getErrorMessage(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
