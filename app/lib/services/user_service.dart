@@ -31,7 +31,9 @@ class UserService {
         logger.info('Usuário cadastrado com sucesso!');
       } else {
         logger.error('Erro ao cadastrar usuário: ${response.body}');
-        throw CustomException('Erro ao cadastrar usuário');
+        throw CustomException(response.statusCode == 409
+            ? 'Email já existente'
+            : 'Erro ao cadastrar usuário');
       }
     } catch (e) {
       logger.error('Erro ao fazer requisição.', error: e);

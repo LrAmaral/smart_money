@@ -54,7 +54,7 @@ class RegisterPageState extends State<RegisterPage> {
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Erro'),
-            content: Text(e.toString()), // Mostra a mensagem de erro
+            content: Text(e.toString()),
             actions: <Widget>[
               TextButton(
                 child: const Text('OK'),
