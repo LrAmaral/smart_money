@@ -73,8 +73,6 @@ class ModalState extends State<Modal> {
       return;
     }
 
-    logger.info('Dados do formulário: $formData');
-
     formData['Tipo'] = _transactionType;
 
     widget.onConfirm(formData);

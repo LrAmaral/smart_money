@@ -153,6 +153,7 @@ class TransactionsPageState extends State<TransactionsPage> {
               logger.error('Erro ao excluir transação: $e');
             }
           },
+          showTransactionTypeButtons: true,
         );
       },
     );
