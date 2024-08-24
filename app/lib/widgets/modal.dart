@@ -180,14 +180,16 @@ class ModalState extends State<Modal> {
                   ),
                 ],
                 const SizedBox(height: 12),
-                Text(
-                  formController.getErrorMessage(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.error,
-                  ),
-                ),
+                Obx(() {
+                  return Text(
+                    formController.getErrorMessage(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.error,
+                    ),
+                  );
+                }),
                 const SizedBox(height: 24),
                 CustomButton(
                   text: widget.textButton,
