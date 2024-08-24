@@ -391,16 +391,22 @@ class GoalsPageState extends State<GoalsPage> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          _showAddBalanceModal(goal);
-                                        },
-                                        child: Icon(
-                                          Icons.add,
-                                          color: colorScheme.primary,
-                                          size: 28,
-                                        ),
-                                      )
+                                      goal['balance'] >= goal['amount']
+                                          ? Icon(
+                                              Icons.check,
+                                              color: colorScheme.primary,
+                                              size: 28,
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                _showAddBalanceModal(goal);
+                                              },
+                                              child: Icon(
+                                                Icons.add,
+                                                color: colorScheme.primary,
+                                                size: 28,
+                                              ),
+                                            )
                                     ],
                                   ),
                                   const SizedBox(height: 8),
@@ -410,14 +416,24 @@ class GoalsPageState extends State<GoalsPage> {
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(8),
-                                          child: LinearProgressIndicator(
-                                            minHeight: 10,
-                                            value: progress / 100,
-                                            backgroundColor: colorScheme.primary
-                                                .withOpacity(0.3),
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                    colorScheme.primary),
+                                          child: TweenAnimationBuilder<double>(
+                                            tween: Tween<double>(
+                                                begin: 0, end: progress / 100),
+                                            duration:
+                                                const Duration(seconds: 1),
+                                            builder: (context, value, child) {
+                                              return LinearProgressIndicator(
+                                                minHeight: 10,
+                                                value: value,
+                                                backgroundColor: colorScheme
+                                                    .primary
+                                                    .withOpacity(0.3),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                            Color>(
+                                                        colorScheme.primary),
+                                              );
+                                            },
                                           ),
                                         ),
                                       ),
