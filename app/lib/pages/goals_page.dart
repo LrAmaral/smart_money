@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smart_money/controller/auth_controller.dart';
+import 'package:smart_money/utils/number_format.dart';
 import 'package:smart_money/widgets/modal.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/custom_button.dart';
@@ -33,7 +34,6 @@ class GoalsPageState extends State<GoalsPage> {
   Future<void> _loadGoals() async {
     try {
       final goals = await _goalService.getGoals();
-      logger.info('Metas carregadas: $goals');
       setState(() {
         _goals = goals;
         _filteredGoals = _goals;
@@ -423,14 +423,14 @@ class GoalsPageState extends State<GoalsPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Saldo: ${goal['balance'].toStringAsFixed(2)}',
+                                    'Saldo: ${currencyFormatter.format(goal['balance'])}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: colorScheme.onBackground,
                                     ),
                                   ),
                                   Text(
-                                    'Meta: ${goal['amount'].toStringAsFixed(2)}',
+                                    'Meta:  ${currencyFormatter.format(goal['amount'])}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: colorScheme.onBackground,
