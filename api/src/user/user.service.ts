@@ -1,10 +1,10 @@
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'node:crypto';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client'; // Importe o tipo Prisma
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -16,19 +16,29 @@ export class UserService {
       password: await bcrypt.hash(createUserDto.password, 10),
     };
 
-    const createdUser = await this.prisma.user.create({
-      data: {
-        id: randomUUID(),
-        name: user.name,
-        email: user.email,
-        password: user.password,
-      },
-    });
+    try {
+      const createdUser = await this.prisma.user.create({
+        data: {
+          id: randomUUID(),
+          name: user.name,
+          email: user.email,
+          password: user.password,
+        },
+      });
 
-    return {
-      ...createdUser,
-      password: undefined,
-    };
+      return {
+        ...createdUser,
+        password: undefined,
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('O e-mail já está cadastrado.');
+      }
+      throw error;
+    }
   }
 
   findAll() {

@@ -27,7 +27,7 @@ class BottomNavBar extends StatelessWidget {
           label: 'Início',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.receipt),
+          icon: Icon(Icons.attach_money),
           label: 'Transações',
         ),
         BottomNavigationBarItem(

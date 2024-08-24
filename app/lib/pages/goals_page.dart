@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smart_money/controller/auth_controller.dart';
+import 'package:smart_money/controller/form_controller.dart';
+import 'package:smart_money/utils/number_format.dart';
 import 'package:smart_money/widgets/modal.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/custom_button.dart';
@@ -15,25 +17,27 @@ class GoalsPage extends StatefulWidget {
 }
 
 class GoalsPageState extends State<GoalsPage> {
-  List<Map<String, dynamic>> _goals = [];
-  List<Map<String, dynamic>> _filteredGoals = [];
   final logger = LoggerService();
   final GoalService _goalService = GoalService();
-  final TextEditingController _searchController = TextEditingController();
   final AuthController authController = Get.put(AuthController());
+  final FormController formController = Get.put(FormController());
+
   String? userId;
+  List<Map<String, dynamic>> _goals = [];
+  List<Map<String, dynamic>> _filteredGoals = [];
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadGoals();
     userId = authController.getUserId();
+    formController.clearErrorMessage();
   }
 
   Future<void> _loadGoals() async {
     try {
       final goals = await _goalService.getGoals();
-      logger.info('Metas carregadas: $goals');
       setState(() {
         _goals = goals;
         _filteredGoals = _goals;
@@ -58,21 +62,38 @@ class GoalsPageState extends State<GoalsPage> {
             {'label': 'Valor da Meta', 'type': 'number'}
           ],
           onConfirm: (data) async {
-            double initialValue = double.tryParse(data['Valor Inicial']) ?? 0.0;
-            double goalValue = double.tryParse(data['Valor da Meta']) ?? 0.0;
-
-            if (goalValue <= 0) {
-              _showErrorDialog('O valor da meta deve ser maior que zero.');
-              return;
-            }
-
-            if (initialValue > goalValue) {
-              _showErrorDialog(
-                  'O valor inicial não pode ser maior que o valor da meta.');
-              return;
-            }
-
+            formController.clearErrorMessage();
             if (userId != null) {
+              if (data['Nome'].toString().trim().isEmpty) {
+                formController
+                    .setErrorMessage('O nome da meta não pode ser vazio.');
+                return;
+              }
+
+              double initialValue;
+              double goalValue;
+
+              try {
+                initialValue = double.parse(data['Valor Inicial']);
+                goalValue = double.parse(data['Valor da Meta']);
+              } catch (e) {
+                formController
+                    .setErrorMessage('Os valores devem ser números válidos.');
+                return;
+              }
+
+              if (initialValue < 0 || goalValue <= 0) {
+                formController
+                    .setErrorMessage('Os valores devem ser maiores que zero.');
+                return;
+              }
+
+              if (initialValue > goalValue) {
+                formController.setErrorMessage(
+                    'O valor inicial não pode ser maior que o valor da meta.');
+                return;
+              }
+
               final newGoal = {
                 'title': data['Nome'],
                 'balance': initialValue,
@@ -87,40 +108,19 @@ class GoalsPageState extends State<GoalsPage> {
                 await _loadGoals();
               } catch (e) {
                 logger.error('Erro ao adicionar meta: $e');
-                _showErrorDialog('Erro ao adicionar meta. Tente novamente.');
+                formController.setErrorMessage(
+                    'Erro ao adicionar meta. Tente novamente.');
               }
             } else {
               logger
                   .error('User ID é nulo. Não foi possível adicionar a meta.');
-              _showErrorDialog(
-                  'Erro ao adicionar meta. ID do usuário não encontrado.');
+              formController.setErrorMessage(
+                  'Erro de autenticação. Tente fazer login novamente.');
             }
           },
         );
       },
     );
-  }
-
-  void _showErrorDialog(String message) {
-    Future.delayed(Duration(milliseconds: 100), () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Erro"),
-            content: Text(message),
-            actions: [
-              TextButton(
-                child: const Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
   }
 
   void _showEditGoalModal(Map<String, dynamic> goal) {
@@ -149,22 +149,35 @@ class GoalsPageState extends State<GoalsPage> {
             },
           ],
           onConfirm: (data) async {
-            double initialValue = double.tryParse(data['Valor Inicial']) ?? 0.0;
-            double goalValue = double.tryParse(data['Valor da Meta']) ?? 0.0;
-
-            if (goalValue <= 0) {
-              _showErrorDialog('O valor da meta deve ser maior que zero.');
+            formController.clearErrorMessage();
+            if (data['Nome'].toString().trim().isEmpty) {
+              formController
+                  .setErrorMessage('O nome da meta não pode ser vazio.');
               return;
             }
 
-            if (initialValue < 0) {
-              _showErrorDialog('O valor inicial não pode ser negativo.');
+            double initialValue;
+            double goalValue;
+
+            try {
+              initialValue = double.parse(data['Valor Inicial']);
+              goalValue = double.parse(data['Valor da Meta']);
+            } catch (e) {
+              formController
+                  .setErrorMessage('Os valores devem ser números válidos.');
+              return;
+            }
+
+            if (initialValue < 0 || goalValue <= 0) {
+              formController
+                  .setErrorMessage('Os valores devem ser maiores que zero.');
               return;
             }
 
             if (initialValue > goalValue) {
-              _showErrorDialog(
-                  'O valor inicial não pode ser maior que o valor da meta.');
+              formController.setErrorMessage(
+                'O valor inicial não pode ser maior que o valor da meta.',
+              );
               return;
             }
 
@@ -180,7 +193,8 @@ class GoalsPageState extends State<GoalsPage> {
               await _loadGoals();
             } catch (e) {
               logger.error('Erro ao atualizar meta: $e');
-              _showErrorDialog('Erro ao atualizar meta. Tente novamente.');
+              formController
+                  .setErrorMessage('Erro ao atualizar meta. Tente novamente.');
             }
           },
           onDelete: () async {
@@ -189,7 +203,8 @@ class GoalsPageState extends State<GoalsPage> {
               await _loadGoals();
             } catch (e) {
               logger.error('Erro ao excluir meta: $e');
-              _showErrorDialog('Erro ao excluir meta. Tente novamente.');
+              formController
+                  .setErrorMessage('Erro ao excluir meta. Tente novamente.');
             }
           },
         );
@@ -209,10 +224,26 @@ class GoalsPageState extends State<GoalsPage> {
             {'label': 'Valor', 'type': 'number'}
           ],
           onConfirm: (data) async {
-            double amountToAdd = double.tryParse(data['Valor']) ?? 0.0;
+            formController.clearErrorMessage();
+            double amountToAdd;
+
+            try {
+              amountToAdd = double.parse(data['Valor']);
+            } catch (e) {
+              formController
+                  .setErrorMessage('O valor deve ser um número válido.');
+              return;
+            }
 
             if (amountToAdd <= 0) {
-              _showErrorDialog('O valor a ser adicionado deve ser positivo.');
+              formController.setErrorMessage(
+                  'O valor a ser adicionado deve ser positivo.');
+              return;
+            }
+
+            if (goal['balance'] + amountToAdd > goal['amount']) {
+              formController.setErrorMessage(
+                  'O valor adicionado excede o valor da meta.');
               return;
             }
 
@@ -228,7 +259,8 @@ class GoalsPageState extends State<GoalsPage> {
               await _loadGoals();
             } catch (e) {
               logger.error('Erro ao adicionar saldo: $e');
-              _showErrorDialog('Erro ao adicionar saldo. Tente novamente.');
+              formController
+                  .setErrorMessage('Erro ao adicionar saldo. Tente novamente.');
             }
           },
         );
@@ -335,29 +367,7 @@ class GoalsPageState extends State<GoalsPage> {
                         final goal = _filteredGoals[index];
                         final progress =
                             (goal['balance'] / goal['amount']) * 100;
-                        final progressLimit = progress > 100 ? 100 : progress;
-                        // if (progressLimit >= 100) {
-                        //   Future.delayed(Duration.zero, () {
-                        //     showDialog(
-                        //       context: context,
-                        //       builder: (BuildContext context) {
-                        //         return AlertDialog(
-                        //           title: const Text('Parabéns!'),
-                        //           content: Text(
-                        //               'Você atingiu 100% da sua meta "${goal['title']}"!'),
-                        //           actions: <Widget>[
-                        //             TextButton(
-                        //               child: const Text('OK'),
-                        //               onPressed: () {
-                        //                 Navigator.of(context).pop();
-                        //               },
-                        //             ),
-                        //           ],
-                        //         );
-                        //       },
-                        //     );
-                        //   });
-                        // }
+
                         return GestureDetector(
                           onTap: () {
                             _showEditGoalModal(goal);
@@ -402,7 +412,7 @@ class GoalsPageState extends State<GoalsPage> {
                                               BorderRadius.circular(8),
                                           child: LinearProgressIndicator(
                                             minHeight: 10,
-                                            value: progressLimit / 100,
+                                            value: progress / 100,
                                             backgroundColor: colorScheme.primary
                                                 .withOpacity(0.3),
                                             valueColor:
@@ -413,7 +423,7 @@ class GoalsPageState extends State<GoalsPage> {
                                       ),
                                       const SizedBox(width: 8.0),
                                       Text(
-                                        '${progressLimit.toStringAsFixed(0)}%',
+                                        '${progress.toStringAsFixed(0)}%',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: colorScheme.onPrimary,
@@ -423,14 +433,14 @@ class GoalsPageState extends State<GoalsPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Saldo: ${goal['balance'].toStringAsFixed(2)}',
+                                    'Saldo: ${currencyFormatter.format(goal['balance'])}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: colorScheme.onBackground,
                                     ),
                                   ),
                                   Text(
-                                    'Meta: ${goal['amount'].toStringAsFixed(2)}',
+                                    'Meta:  ${currencyFormatter.format(goal['amount'])}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: colorScheme.onBackground,

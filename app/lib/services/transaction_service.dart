@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/constants/env.dart';
@@ -14,13 +13,11 @@ class TransactionService {
     var url = Uri.parse('${ApiConstants.baseUrl}/transaction');
     final token = authController.getAccessToken();
 
-    logger.warning(transactionData);
-
     try {
       var response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token'
         },
         body: json.encode(transactionData),
@@ -40,22 +37,20 @@ class TransactionService {
 
   Future<List<Map<String, dynamic>>> getTransactions() async {
     final token = authController.getAccessToken();
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    String userId = decodedToken['sub'];
+    final userId = authController.getUserId();
 
     var url = Uri.parse('${ApiConstants.baseUrl}/transaction/$userId');
     try {
       var response = await http.get(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token',
         },
       );
 
       if (response.statusCode == 200) {
         dynamic data = json.decode(response.body);
-        logger.warning(data);
 
         if (data is List) {
           return data.map((item) => Map<String, dynamic>.from(item)).toList();
@@ -83,7 +78,7 @@ class TransactionService {
       var response = await http.delete(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token',
         },
       );
@@ -109,7 +104,7 @@ class TransactionService {
       var response = await http.patch(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token',
         },
         body: json.encode(updatedData),

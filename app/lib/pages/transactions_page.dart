@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smart_money/controller/auth_controller.dart';
+import 'package:smart_money/controller/form_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
+import 'package:smart_money/utils/number_format.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/modal.dart';
@@ -22,6 +24,7 @@ class TransactionsPageState extends State<TransactionsPage> {
   final TransactionService _transactionService = TransactionService();
   final TextEditingController _searchController = TextEditingController();
   final AuthController authController = Get.put(AuthController());
+  final FormController formController = Get.put(FormController());
   String? userId;
 
   @override
@@ -32,12 +35,15 @@ class TransactionsPageState extends State<TransactionsPage> {
   }
 
   Future<void> _loadTransactions() async {
-    final transactions = await _transactionService.getTransactions();
-
-    setState(() {
-      _transactions = transactions;
-      _filteredTransactions = _transactions;
-    });
+    try {
+      final transactions = await _transactionService.getTransactions();
+      setState(() {
+        _transactions = transactions;
+        _filteredTransactions = _transactions;
+      });
+    } catch (e) {
+      logger.error('Erro ao carregar transações: $e');
+    }
   }
 
   void _filterTransactions(String query) {
@@ -55,37 +61,104 @@ class TransactionsPageState extends State<TransactionsPage> {
   }
 
   Future<void> _addTransaction(Map<String, dynamic> data) async {
+    formController.clearErrorMessage();
+    if (data['Título'].toString().trim().isEmpty) {
+      formController.setErrorMessage('O título não pode ser vazio.');
+      return;
+    }
+
+    double amount;
+    try {
+      amount = double.parse(data['Valor']);
+    } catch (e) {
+      formController.setErrorMessage('O valor deve ser um número válido.');
+      return;
+    }
+
+    if (amount <= 0) {
+      formController.setErrorMessage('O valor deve ser maior que zero.');
+      return;
+    }
+
+    if (data['Tipo'] == 'saida') {
+      amount *= -1;
+    }
+
+    if (data['Categoria'].toString().trim().isEmpty) {
+      formController.setErrorMessage('A categoria não pode ser vazio.');
+      return;
+    }
+
     final newTransaction = {
       'user_id': userId.toString(),
       'title': data['Título'],
-      'amount': double.tryParse(data['Valor']) ?? 0.0,
+      'amount': amount,
       'category': data['Categoria'],
       'type': data['Tipo'],
     };
 
-    if (data['Tipo'] == 'saida') {
-      newTransaction['amount'] *= -1;
+    try {
+      await _transactionService.registerTransaction(newTransaction);
+      await _loadTransactions();
+    } catch (e) {
+      logger.error('Erro ao adicionar transação: $e');
+      formController
+          .setErrorMessage('Erro ao adicionar transação. Tente novamente.');
     }
-
-    await _transactionService.registerTransaction(newTransaction);
-    _loadTransactions();
   }
 
   Future<void> _editTransaction(String id, Map<String, dynamic> data) async {
+    formController.clearErrorMessage();
+    if (data['Título'].toString().trim().isEmpty) {
+      formController.setErrorMessage('O título não pode ser vazio.');
+      return;
+    }
+
+    double amount;
+    try {
+      amount = double.parse(data['Valor']);
+    } catch (e) {
+      formController.setErrorMessage('O valor deve ser um número válido.');
+      return;
+    }
+
+    if (amount <= 0) {
+      formController.setErrorMessage('O valor deve ser maior que zero.');
+      return;
+    }
+
+    if (data['Categoria'].toString().trim().isEmpty) {
+      formController.setErrorMessage('A categoria não pode ser vazio.');
+      return;
+    }
+
     final updatedTransaction = {
       'user_id': userId.toString(),
       'title': data['Título'],
-      'amount': double.tryParse(data['Valor']) ?? 0.0,
+      'amount': data['Tipo'] == 'saida' ? amount * -1 : amount,
       'category': data['Categoria'],
       'type': data['Tipo'],
     };
-    await _transactionService.editTransaction(id, updatedTransaction);
-    _loadTransactions();
+
+    try {
+      await _transactionService.editTransaction(id, updatedTransaction);
+      await _loadTransactions();
+    } catch (e) {
+      logger.error('Erro ao editar transação: $e');
+      formController
+          .setErrorMessage('Erro ao editar transação. Tente novamente.');
+    }
   }
 
   Future<void> _deleteTransaction(String id) async {
-    await _transactionService.deleteTransaction(id);
-    _loadTransactions();
+    try {
+      await _transactionService.deleteTransaction(id);
+      await _loadTransactions();
+    } catch (e) {
+      logger.error('Erro ao excluir transação: $e');
+      formController
+          .setErrorMessage('Erro ao excluir transação. Tente novamente.');
+    }
   }
 
   void _showAddTransactionModal() {
@@ -103,7 +176,6 @@ class TransactionsPageState extends State<TransactionsPage> {
           ],
           onConfirm: (data) async {
             await _addTransaction(data);
-            await _loadTransactions();
           },
           showTransactionTypeButtons: true,
         );
@@ -137,21 +209,12 @@ class TransactionsPageState extends State<TransactionsPage> {
             },
           ],
           onConfirm: (data) async {
-            try {
-              await _editTransaction(transaction['id'], data);
-              await _loadTransactions();
-            } catch (e) {
-              logger.error('Erro ao editar transação: $e');
-            }
+            await _editTransaction(transaction['id'], data);
           },
           onDelete: () async {
-            try {
-              await _deleteTransaction(transaction['id']);
-              await _loadTransactions();
-            } catch (e) {
-              logger.error('Erro ao excluir transação: $e');
-            }
+            await _deleteTransaction(transaction['id']);
           },
+          showTransactionTypeButtons: true,
         );
       },
     );
@@ -277,7 +340,8 @@ class TransactionsPageState extends State<TransactionsPage> {
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        'R\$ ${transaction['amount'].toStringAsFixed(2)}',
+                                        currencyFormatter
+                                            .format(transaction['amount']),
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,

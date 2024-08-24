@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:smart_money/controller/auth_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/constants/env.dart';
@@ -11,9 +10,7 @@ class DashboardService {
     final logger = LoggerService();
     final AuthController authController = Get.put(AuthController());
     final token = authController.getAccessToken();
-
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    String userId = decodedToken['sub'];
+    final userId = authController.getUserId();
 
     var url = Uri.parse('${ApiConstants.baseUrl}/dashboard/$userId');
 
@@ -21,7 +18,7 @@ class DashboardService {
       var response = await http.get(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': ApiConstants.contentType,
           'Authorization': 'Bearer $token',
         },
       );

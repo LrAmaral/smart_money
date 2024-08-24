@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:smart_money/controller/form_controller.dart';
 import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/widgets/custom_button.dart';
 import 'package:smart_money/widgets/modal_input.dart';
@@ -29,12 +31,15 @@ class Modal extends StatefulWidget {
 
 class ModalState extends State<Modal> {
   final logger = LoggerService();
+  final FormController formController = Get.put(FormController());
+
   String _transactionType = 'entrada';
   final Map<String, TextEditingController> _controllers = {};
 
   @override
   void initState() {
     super.initState();
+    formController.clearErrorMessage();
     _controllers.addAll({
       for (var field in widget.fields)
         field['label']: TextEditingController(text: field['value'] ?? ''),
@@ -55,44 +60,14 @@ class ModalState extends State<Modal> {
         field['label'] as String: _controllers[field['label']]?.text ?? '',
     };
 
-    if (formData.values.any((value) => value.isEmpty)) {
-      _showErrorDialog('Por favor, preencha todos os campos.');
-      return;
-    }
-
-    if (formData.containsKey('Valor') &&
-        (double.tryParse(formData['Valor'] ?? '') == null ||
-            double.tryParse(formData['Valor'] ?? '')! <= 0)) {
-      _showErrorDialog('O valor deve ser um número positivo.');
-      return;
-    }
-
-    logger.info('Dados do formulário: $formData');
-
     formData['Tipo'] = _transactionType;
 
     widget.onConfirm(formData);
-    Navigator.pop(context);
-  }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Erro"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    if (formController.getErrorMessage().isEmpty) {
+      Navigator.pop(context);
+      formController.clearErrorMessage();
+    }
   }
 
   @override
@@ -204,7 +179,18 @@ class ModalState extends State<Modal> {
                     ],
                   ),
                 ],
-                const SizedBox(height: 48),
+                const SizedBox(height: 12),
+                Obx(() {
+                  return Text(
+                    formController.getErrorMessage(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.error,
+                    ),
+                  );
+                }),
+                const SizedBox(height: 24),
                 CustomButton(
                   text: widget.textButton,
                   onPressed: _handleConfirm,
