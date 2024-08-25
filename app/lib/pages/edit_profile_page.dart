@@ -67,7 +67,9 @@ class EditProfilePageState extends State<EditProfilePage> {
         if (userMap.isNotEmpty) {
           await userService.editProfile(userMap);
           authController.setUserProfile(userMap);
-          context.pop();
+          if (mounted) {
+            context.pop();
+          }
         } else {
           logger.error('Nenhuma informação foi alterada.');
         }
