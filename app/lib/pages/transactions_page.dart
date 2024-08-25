@@ -18,14 +18,16 @@ class TransactionsPage extends StatefulWidget {
 }
 
 class TransactionsPageState extends State<TransactionsPage> {
-  List<Map<String, dynamic>> _filteredTransactions = [];
-  List<Map<String, dynamic>> _transactions = [];
   final logger = LoggerService();
   final TransactionService _transactionService = TransactionService();
-  final TextEditingController _searchController = TextEditingController();
   final AuthController authController = Get.put(AuthController());
   final FormController formController = Get.put(FormController());
+
   String? userId;
+  bool _isLoading = false;
+  List<Map<String, dynamic>> _filteredTransactions = [];
+  List<Map<String, dynamic>> _transactions = [];
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -35,15 +37,21 @@ class TransactionsPageState extends State<TransactionsPage> {
   }
 
   Future<void> _loadTransactions() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final transactions = await _transactionService.getTransactions();
-      logger.info(transactions);
       setState(() {
         _transactions = transactions;
         _filteredTransactions = _transactions;
       });
     } catch (e) {
       logger.error('Erro ao carregar transações: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -297,89 +305,96 @@ class TransactionsPageState extends State<TransactionsPage> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: _filteredTransactions.isEmpty
+              child: _isLoading
                   ? Center(
-                      child: Text(
-                        'Nenhuma transação encontrada',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: colorScheme.onBackground,
-                        ),
+                      child: CircularProgressIndicator(
+                        color: colorScheme.primary,
                       ),
                     )
-                  : ListView.builder(
-                      itemCount: _filteredTransactions.length,
-                      itemBuilder: (context, index) {
-                        final transaction = _filteredTransactions[index];
-                        final amountColor = transaction['type'] == 'saida'
-                            ? colorScheme.error
-                            : colorScheme.primary;
+                  : _filteredTransactions.isEmpty
+                      ? Center(
+                          child: Text(
+                            'Nenhuma transação encontrada',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: colorScheme.onBackground,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: _filteredTransactions.length,
+                          itemBuilder: (context, index) {
+                            final transaction = _filteredTransactions[index];
+                            final amountColor = transaction['type'] == 'saida'
+                                ? colorScheme.error
+                                : colorScheme.primary;
 
-                        return GestureDetector(
-                          onTap: () {
-                            _showEditTransactionModal(transaction);
-                          },
-                          child: Card(
-                            color: colorScheme.secondary,
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    transaction['title'],
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
+                            return GestureDetector(
+                              onTap: () {
+                                _showEditTransactionModal(transaction);
+                              },
+                              child: Card(
+                                color: colorScheme.secondary,
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        currencyFormatter
-                                            .format(transaction['amount']),
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: amountColor,
-                                        ),
+                                        transaction['title'],
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
+                                      const SizedBox(height: 10),
                                       Row(
-                                        children: [
-                                          Icon(
-                                            Icons.turned_in_not,
-                                            size: 16,
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.6),
-                                          ),
-                                          const SizedBox(width: 4),
+                                        children: <Widget>[
                                           Text(
-                                            transaction['category'],
+                                            currencyFormatter
+                                                .format(transaction['amount']),
                                             style: TextStyle(
-                                              fontSize: 14,
-                                              color: colorScheme.onSurface
-                                                  .withOpacity(0.6),
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: amountColor,
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.turned_in_not,
+                                                size: 16,
+                                                color: colorScheme.onSurface
+                                                    .withOpacity(0.6),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                transaction['category'],
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: colorScheme.onSurface
+                                                      .withOpacity(0.6),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                            );
+                          },
+                        ),
             ),
           ],
         ),

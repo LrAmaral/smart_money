@@ -23,6 +23,7 @@ class GoalsPageState extends State<GoalsPage> {
   final FormController formController = Get.put(FormController());
 
   String? userId;
+  bool _isLoading = false;
   List<Map<String, dynamic>> _goals = [];
   List<Map<String, dynamic>> _filteredGoals = [];
   final TextEditingController _searchController = TextEditingController();
@@ -36,6 +37,9 @@ class GoalsPageState extends State<GoalsPage> {
   }
 
   Future<void> _loadGoals() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final goals = await _goalService.getGoals();
       setState(() {
@@ -44,6 +48,10 @@ class GoalsPageState extends State<GoalsPage> {
       });
     } catch (e) {
       logger.error('Erro ao carregar metas: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -351,124 +359,135 @@ class GoalsPageState extends State<GoalsPage> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: _filteredGoals.isEmpty
+              child: _isLoading
                   ? Center(
-                      child: Text(
-                        'Nenhuma meta encontrada',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: colorScheme.onBackground,
-                        ),
+                      child: CircularProgressIndicator(
+                        color: colorScheme.primary,
                       ),
                     )
-                  : ListView.builder(
-                      itemCount: _filteredGoals.length,
-                      itemBuilder: (context, index) {
-                        final goal = _filteredGoals[index];
-                        final progress =
-                            (goal['balance'] / goal['amount']) * 100;
-
-                        return GestureDetector(
-                          onTap: () {
-                            _showEditGoalModal(goal);
-                          },
-                          child: Card(
-                            color: colorScheme.secondary,
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        goal['title'],
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      goal['balance'] >= goal['amount']
-                                          ? Icon(
-                                              Icons.check,
-                                              color: colorScheme.primary,
-                                              size: 28,
-                                            )
-                                          : GestureDetector(
-                                              onTap: () {
-                                                _showAddBalanceModal(goal);
-                                              },
-                                              child: Icon(
-                                                Icons.add,
-                                                color: colorScheme.primary,
-                                                size: 28,
-                                              ),
-                                            )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: TweenAnimationBuilder<double>(
-                                            tween: Tween<double>(
-                                                begin: 0, end: progress / 100),
-                                            duration:
-                                                const Duration(seconds: 1),
-                                            builder: (context, value, child) {
-                                              return LinearProgressIndicator(
-                                                minHeight: 10,
-                                                value: value,
-                                                backgroundColor: colorScheme
-                                                    .primary
-                                                    .withOpacity(0.3),
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                            Color>(
-                                                        colorScheme.primary),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8.0),
-                                      Text(
-                                        '${progress.toStringAsFixed(0)}%',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: colorScheme.onPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Saldo: ${currencyFormatter.format(goal['balance'])}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: colorScheme.onBackground,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Meta:  ${currencyFormatter.format(goal['amount'])}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: colorScheme.onBackground,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                  : _filteredGoals.isEmpty
+                      ? Center(
+                          child: Text(
+                            'Nenhuma meta encontrada',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: colorScheme.onBackground,
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        )
+                      : ListView.builder(
+                          itemCount: _filteredGoals.length,
+                          itemBuilder: (context, index) {
+                            final goal = _filteredGoals[index];
+                            final progress =
+                                (goal['balance'] / goal['amount']) * 100;
+
+                            return GestureDetector(
+                              onTap: () {
+                                _showEditGoalModal(goal);
+                              },
+                              child: Card(
+                                color: colorScheme.secondary,
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            goal['title'],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          goal['balance'] >= goal['amount']
+                                              ? Icon(
+                                                  Icons.check,
+                                                  color: colorScheme.primary,
+                                                  size: 28,
+                                                )
+                                              : GestureDetector(
+                                                  onTap: () {
+                                                    _showAddBalanceModal(goal);
+                                                  },
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: colorScheme.primary,
+                                                    size: 28,
+                                                  ),
+                                                )
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child:
+                                                  TweenAnimationBuilder<double>(
+                                                tween: Tween<double>(
+                                                    begin: 0,
+                                                    end: progress / 100),
+                                                duration:
+                                                    const Duration(seconds: 1),
+                                                builder:
+                                                    (context, value, child) {
+                                                  return LinearProgressIndicator(
+                                                    minHeight: 10,
+                                                    value: value,
+                                                    backgroundColor: colorScheme
+                                                        .primary
+                                                        .withOpacity(0.3),
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            colorScheme
+                                                                .primary),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8.0),
+                                          Text(
+                                            '${progress.toStringAsFixed(0)}%',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: colorScheme.onPrimary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Saldo: ${currencyFormatter.format(goal['balance'])}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: colorScheme.onBackground,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Meta:  ${currencyFormatter.format(goal['amount'])}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: colorScheme.onBackground,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
             ),
           ],
         ),
