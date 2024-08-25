@@ -37,6 +37,7 @@ class TransactionsPageState extends State<TransactionsPage> {
   Future<void> _loadTransactions() async {
     try {
       final transactions = await _transactionService.getTransactions();
+      logger.info(transactions);
       setState(() {
         _transactions = transactions;
         _filteredTransactions = _transactions;

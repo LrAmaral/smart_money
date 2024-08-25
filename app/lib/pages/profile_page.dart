@@ -101,23 +101,25 @@ class ProfilePage extends StatelessWidget {
                       try {
                         await userService.deleteProfile();
                         authController.clearAuthData();
-                        context.go('/login');
+                        if (context.mounted) context.go('/login');
                       } catch (e) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Erro'),
-                            content: const Text('Erro ao excluir perfil.'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          ),
-                        );
+                        if (context.mounted) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Erro'),
+                              content: const Text('Erro ao excluir perfil.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       }
                     }
                   },

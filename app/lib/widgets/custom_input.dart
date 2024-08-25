@@ -15,10 +15,10 @@ class CustomInput extends StatefulWidget {
   });
 
   @override
-  _CustomInputState createState() => _CustomInputState();
+  CustomInputState createState() => CustomInputState();
 }
 
-class _CustomInputState extends State<CustomInput> {
+class CustomInputState extends State<CustomInput> {
   late bool _obscureText;
 
   @override

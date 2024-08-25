@@ -29,7 +29,7 @@ class AuthController extends GetxController {
   }
 
   Map<String, dynamic> getUserProfile() {
-    return userProfile.value;
+    return userProfile;
   }
 
   void setName(String name) {
