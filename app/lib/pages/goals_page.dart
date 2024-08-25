@@ -303,7 +303,7 @@ class GoalsPageState extends State<GoalsPage> {
             ),
             Column(
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 CustomButton(
                   text: 'Adicionar meta',
                   size: const Size(100, 36),
