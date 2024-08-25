@@ -24,9 +24,30 @@ class LoginPage extends StatelessWidget {
         final user = LoginUser(email: email, password: password);
         await userService.login(user);
 
-        if (userService.authController.accessToken.isNotEmpty) {
-          context.go('/home');
-        } else {
+        if (context.mounted) {
+          if (userService.authController.accessToken.isNotEmpty) {
+            context.go('/home');
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Erro'),
+                content: const Text(
+                    'Falha ao fazer login. Verifique suas credenciais.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -44,23 +65,6 @@ class LoginPage extends StatelessWidget {
             ),
           );
         }
-      } catch (e) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Erro'),
-            content:
-                const Text('Falha ao fazer login. Verifique suas credenciais.'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
       }
     }
 
