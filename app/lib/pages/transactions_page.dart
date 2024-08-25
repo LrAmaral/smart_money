@@ -248,7 +248,7 @@ class TransactionsPageState extends State<TransactionsPage> {
             ),
             Column(
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 CustomButton(
                   text: 'Adicionar transação',
                   size: const Size(100, 36),
