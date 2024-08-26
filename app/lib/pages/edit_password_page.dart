@@ -111,16 +111,16 @@ class EditPasswordPageState extends State<EditPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1CA477)),
+          icon: Icon(Icons.arrow_back, color: colorScheme.primary),
           onPressed: () {
-            context.pop();
+            context.go('/login');
           },
         ),
-        title: const Text('Alterar Senha',
-            style: TextStyle(color: Color(0xFF1CA477))),
       ),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
@@ -129,7 +129,12 @@ class EditPasswordPageState extends State<EditPasswordPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 52),
+              const SizedBox(height: 30),
+              Text(
+                'Alterar senha',
+                style: TextStyle(fontSize: 28, color: colorScheme.primary),
+              ),
+              const SizedBox(height: 50),
               CustomInput(
                 labelText: 'Email',
                 controller: emailController,
