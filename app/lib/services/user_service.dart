@@ -95,6 +95,35 @@ class UserService {
     }
   }
 
+  Future<void> editProfileByEmail(String email, String password) async {
+    var url = Uri.parse('${ApiConstants.baseUrl}/user/by-email/$email');
+
+    var userJson = json.encode({
+      'password': password,
+    });
+
+    try {
+      var response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': ApiConstants.contentType,
+        },
+        body: userJson,
+      );
+
+      if (response.statusCode == 200) {
+        logger.info('Edição feita com sucesso!');
+      } else if (response.statusCode == 404) {
+        throw Exception('Email não encontrado');
+      } else {
+        throw Exception('Falha ao realizar edição: ${response.body}');
+      }
+    } catch (e) {
+      logger.error('Erro ao fazer requisição.', error: e);
+      rethrow; // Lança a exceção novamente para que possa ser capturada no nível superior
+    }
+  }
+
   Future<void> deleteProfile() async {
     var token = authController.getAccessToken();
     var userId = authController.getUserId();

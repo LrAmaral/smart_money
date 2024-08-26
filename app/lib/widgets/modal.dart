@@ -99,15 +99,16 @@ class ModalState extends State<Modal> {
               children: <Widget>[
                 Row(
                   children: [
-                    Text(
-                      widget.title,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onPrimary,
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onPrimary,
+                        ),
                       ),
                     ),
-                    const Spacer(),
                     InkWell(
                       child: Icon(
                         Icons.close,
@@ -121,22 +122,22 @@ class ModalState extends State<Modal> {
                 ),
                 const SizedBox(height: 40),
                 Column(
-                  children: widget.fields
-                      .map((field) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: ModalInput(
-                              label: field['label'] ?? '',
-                              initialValue: field['value'] ?? '',
-                              type: ModalInputType.values.firstWhere(
-                                (e) =>
-                                    e.toString() ==
-                                    'ModalInputType.${field['type'] ?? 'text'}',
-                                orElse: () => ModalInputType.text,
-                              ),
-                              controller: _controllers[field['label']],
-                            ),
-                          ))
-                      .toList(),
+                  children: widget.fields.map((field) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: ModalInput(
+                        label: field['label'] ?? '',
+                        initialValue: field['value'] ?? '',
+                        type: ModalInputType.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'ModalInputType.${field['type'] ?? 'text'}',
+                          orElse: () => ModalInputType.text,
+                        ),
+                        controller: _controllers[field['label']],
+                      ),
+                    );
+                  }).toList(),
                 ),
                 if (widget.showTransactionTypeButtons) ...[
                   const SizedBox(height: 16),

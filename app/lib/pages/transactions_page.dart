@@ -351,13 +351,19 @@ class TransactionsPageState extends State<TransactionsPage> {
                                       const SizedBox(height: 10),
                                       Row(
                                         children: <Widget>[
-                                          Text(
-                                            currencyFormatter
-                                                .format(transaction['amount']),
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: amountColor,
+                                          Expanded(
+                                            child: Text(
+                                              currencyFormatter.format(
+                                                  transaction['amount']),
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: amountColor,
+                                              ),
+                                              softWrap:
+                                                  true, // Permite a quebra de linha
+                                              overflow: TextOverflow
+                                                  .visible, // Garante que o texto não será cortado com reticências
                                             ),
                                           ),
                                         ],

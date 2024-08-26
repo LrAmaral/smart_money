@@ -38,6 +38,15 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @IsPublic()
+  @Patch('by-email/:email')
+  updateByEmail(
+    @Param('email') email: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateByEmail(email, updateUserDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);

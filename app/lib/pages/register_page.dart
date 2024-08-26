@@ -33,38 +33,42 @@ class RegisterPageState extends State<RegisterPage> {
       try {
         final user = UserRegister(email: email, name: name, password: password);
         await userService.register(user);
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Sucesso'),
-            content: const Text('Cadastro realizado com sucesso!'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  context.go('/login');
-                },
-              ),
-            ],
-          ),
-        );
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Sucesso'),
+              content: const Text('Cadastro realizado com sucesso!'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.go('/login');
+                  },
+                ),
+              ],
+            ),
+          );
+        }
       } catch (e) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Erro'),
-            content: Text(e.toString()),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erro'),
+              content: Text(e.toString()),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        }
       }
     } else {
       showDialog(
