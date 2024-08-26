@@ -80,6 +80,24 @@ export class UserService {
     };
   }
 
+  async updateByEmail(email: string, updateUserDto: UpdateUserDto) {
+    const data: Prisma.UserUpdateInput = { ...updateUserDto };
+
+    if (updateUserDto.password) {
+      data.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { email },
+      data,
+    });
+
+    return {
+      ...updatedUser,
+      password: undefined,
+    };
+  }
+
   async remove(id: string) {
     await this.prisma.user.delete({
       where: { id },
