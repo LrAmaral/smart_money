@@ -86,6 +86,9 @@ class UserService {
         logger.info('Edição feita com sucesso!');
       } else {
         logger.error('Falha ao realizar edição: ${response.body}');
+        throw CustomException(response.statusCode == 400
+            ? 'Email Inválido'
+            : 'Erro ao cadastrar usuário');
       }
     } catch (e) {
       logger.error('Erro ao fazer requisição.', error: e);
