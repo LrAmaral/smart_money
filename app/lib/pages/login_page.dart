@@ -17,8 +17,8 @@ class LoginPage extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     void handleLogin() async {
-      final email = emailController.text;
-      final password = passwordController.text;
+      final email = emailController.text.trim().toLowerCase();
+      final password = passwordController.text.trim();
 
       try {
         final user = LoginUser(email: email, password: password);

@@ -7,6 +7,7 @@ import 'package:smart_money/services/logger_service.dart';
 import 'package:smart_money/services/user_service.dart';
 import 'package:smart_money/widgets/custom_input.dart';
 import 'package:smart_money/widgets/custom_button.dart';
+import 'package:validators/validators.dart' as validators;
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -48,11 +49,30 @@ class EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
-  void handleEditProfile() async {
+  void handleEditProfile(BuildContext context) async {
     final name = nameController.text;
-    final email = emailController.text;
-    final password = newPasswordController.text;
-    final confirmPassword = confirmPasswordController.text;
+    final email = emailController.text.trim().toLowerCase();
+    final password = newPasswordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
+
+    if (!validators.isEmail(email)) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erro'),
+          content: const Text('O email fornecido não é válido.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     if (password.isEmpty || password == confirmPassword) {
       try {
@@ -63,8 +83,8 @@ class EditProfilePageState extends State<EditProfilePage> {
         );
 
         final userMap = user.toEditJson();
-
-        if (userMap.isNotEmpty) {
+ 
+        if (context.mounted) {
           await userService.editProfile(userMap);
           authController.setUserProfile(userMap);
           if (mounted) {
@@ -72,12 +92,58 @@ class EditProfilePageState extends State<EditProfilePage> {
           }
         } else {
           logger.error('Nenhuma informação foi alterada.');
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Aviso'),
+              content: const Text('Nenhuma informação foi alterada.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
         }
       } catch (e) {
-        logger.error('Erro ao salvar alterações', error: e);
+        if (context.mounted) {
+          logger.error('Erro ao salvar alterações', error: e);
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erro'),
+              content: Text(e.toString()),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        }
       }
     } else {
-      logger.error('Senhas não correspondem.');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erro'),
+          content: const Text('Senhas não correspondem.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -123,7 +189,7 @@ class EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 80),
               CustomButton(
                 text: 'Salvar Alterações',
-                onPressed: handleEditProfile,
+                onPressed: () => handleEditProfile(context),
                 size: const Size(100, 52),
               ),
               const SizedBox(height: 24),

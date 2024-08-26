@@ -25,9 +25,10 @@ class RegisterPageState extends State<RegisterPage> {
 
   void handleUserRegister() async {
     final name = nameController.text;
-    final email = emailController.text;
-    final password = passwordController.text;
-    final confirmPassword = confirmPasswordController.text;
+    final email = emailController.text.trim().toLowerCase();
+ 
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
     if (password == confirmPassword) {
       try {
