@@ -50,7 +50,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   void handleEditProfile(BuildContext context) async {
-    final name = nameController.text.trim().toLowerCase();
+    final name = nameController.text;
     final email = emailController.text.trim().toLowerCase();
     final password = newPasswordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
