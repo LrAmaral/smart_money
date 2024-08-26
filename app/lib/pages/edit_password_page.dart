@@ -11,11 +11,13 @@ class EditPasswordPage extends StatefulWidget {
 }
 
 class EditPasswordPageState extends State<EditPasswordPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -52,14 +54,28 @@ class EditPasswordPageState extends State<EditPasswordPage> {
               const SizedBox(height: 16),
               CustomInput(
                 labelText: 'Confirmar Nova Senha',
-                controller: passwordController,
+                controller: confirmPasswordController,
                 obscureText: true,
               ),
               const SizedBox(height: 56),
               CustomButton(
                 text: 'Alterar Senha',
                 onPressed: () {
-                  context.go('/home');
+                  String email = emailController.text.trim().toLowerCase();
+                  String password =
+                      passwordController.text.trim().toLowerCase();
+                  String confirmPassword =
+                      confirmPasswordController.text.trim().toLowerCase();
+
+                  if (password == confirmPassword) {
+                    context.go('/home');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('As senhas não coincidem'),
+                      ),
+                    );
+                  }
                 },
               ),
               const SizedBox(height: 100),
