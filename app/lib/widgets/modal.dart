@@ -126,7 +126,7 @@ class ModalState extends State<Modal> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: ModalInput(
-                        n: 22,
+                        limitNumber: 22,
                         label: field['label'] ?? '',
                         initialValue: field['value'] ?? '',
                         type: ModalInputType.values.firstWhere(

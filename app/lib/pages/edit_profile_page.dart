@@ -74,6 +74,25 @@ class EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
+    if (name.length < 3) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erro'),
+          content: const Text('O nome deve ter pelo menos 3 caracteres.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     if (password.isEmpty || password == confirmPassword) {
       try {
         final user = EditUser(
@@ -83,11 +102,11 @@ class EditProfilePageState extends State<EditProfilePage> {
         );
 
         final userMap = user.toEditJson();
- 
+
         if (context.mounted) {
           await userService.editProfile(userMap);
           authController.setUserProfile(userMap);
-          if (mounted) {
+          if (context.mounted) {
             context.pop();
           }
         } else {
