@@ -81,6 +81,7 @@ class HomePageState extends State<HomePage> {
                         color: Colors.white,
                         fontSize: 16,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

@@ -8,7 +8,7 @@ class ModalInput extends StatefulWidget {
   final String initialValue;
   final ModalInputType type;
   final TextEditingController? controller;
-  final int? n;
+  final int? limitNumber;
 
   const ModalInput({
     super.key,
@@ -16,14 +16,14 @@ class ModalInput extends StatefulWidget {
     required this.initialValue,
     required this.type,
     this.controller,
-    this.n,
+    this.limitNumber,
   });
 
   @override
-  _ModalInputState createState() => _ModalInputState();
+  ModalInputState createState() => ModalInputState();
 }
 
-class _ModalInputState extends State<ModalInput> {
+class ModalInputState extends State<ModalInput> {
   late TextEditingController _controller;
   DateTime? _selectedDate;
 
@@ -65,8 +65,8 @@ class _ModalInputState extends State<ModalInput> {
               _selectDate(context);
             }
           : null,
-      inputFormatters: widget.n != null
-          ? [LengthLimitingTextInputFormatter(widget.n)]
+      inputFormatters: widget.limitNumber != null
+          ? [LengthLimitingTextInputFormatter(widget.limitNumber)]
           : null,
       decoration: InputDecoration(
         labelText: widget.label,
