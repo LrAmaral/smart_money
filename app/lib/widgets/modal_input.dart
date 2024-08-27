@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_money/enums/input_type.dart';
+import 'package:flutter/services.dart';
 
 class ModalInput extends StatefulWidget {
   final String label;
   final String initialValue;
   final ModalInputType type;
   final TextEditingController? controller;
+  final int? n;
 
   const ModalInput({
     super.key,
@@ -14,6 +16,7 @@ class ModalInput extends StatefulWidget {
     required this.initialValue,
     required this.type,
     this.controller,
+    this.n,
   });
 
   @override
@@ -61,6 +64,9 @@ class _ModalInputState extends State<ModalInput> {
               FocusScope.of(context).requestFocus(FocusNode());
               _selectDate(context);
             }
+          : null,
+      inputFormatters: widget.n != null
+          ? [LengthLimitingTextInputFormatter(widget.n)]
           : null,
       decoration: InputDecoration(
         labelText: widget.label,
